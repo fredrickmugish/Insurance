@@ -1,0 +1,111 @@
+{% extends 'provider/provider_dashboard.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="update-customer-container">
+    <h3 class="page-title">Update User Information</h3>
+    
+    <div class="form-wrapper">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                {{ form.username|add_class:"form-control" }}
+            </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                {{ form.first_name|add_class:"form-control" }}
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                {{ form.last_name|add_class:"form-control" }}
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                {{ form.email|add_class:"form-control" }}
+            </div>
+
+            <button type="submit" class="submit-btn">Update User</button>
+        </form>
+    </div>
+</div>
+
+
+<style>
+    .update-customer-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    .form-wrapper {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4CAF50;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #45a049;
+    }
+
+    @media (max-width: 768px) {
+        .update-customer-container {
+            padding: 1rem;
+        }
+        
+        .form-wrapper {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock content %}

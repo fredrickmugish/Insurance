@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insurance Platform</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 100px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Insurance Platform</h1>
+        <div>
+            <a href="{% url 'login' %}"><button class="btn">Login</button></a>
+            <a href="{% url 'signup' %}"><button class="btn">Register</button></a>
+        </div>
+    </div>
+</body>
+</html>
