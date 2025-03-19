@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from provider.models import Policy
+from customer.models import Payment
 from .models import PolicyRecord, Question
 from . import forms, models
+from customer.forms import PaymentForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
+from customer.utils import create_notification
 
 @login_required
 def customer_dashboard_view(request):
@@ -124,3 +127,43 @@ def mark_all_read(request):
     """Mark all notifications as read"""
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return redirect('customer:notifications_list')
+
+
+@login_required
+def payment_list(request):
+    """View to display all payments for the customer"""
+    payments = Payment.objects.filter(policy_record__customer=request.user)
+    return render(request, 'customer/payment_list.html', {'payments': payments})
+
+@login_required
+def make_payment(request, policy_id):
+    """View to make a payment for a policy"""
+    policy_record = get_object_or_404(PolicyRecord, id=policy_id, customer=request.user)
+    
+    if request.method == 'POST':
+        form = PaymentForm(request.POST, request.FILES)
+        if form.is_valid():
+            payment = form.save(commit=False)
+            payment.policy_record = policy_record
+            payment.status = 'PENDING'
+            payment.save()
+            
+            # Create notification for the provider
+            create_notification(
+                recipient=policy_record.policy.provider,
+                notification_type='payment_due',
+                title='New Payment Submission',
+                message=f'A payment of ${payment.amount} has been submitted for {policy_record.policy.policy_name} by {request.user.get_full_name()}.',
+                related_link=f'/provider/payments/{payment.id}/'
+            )
+            
+            messages.success(request, 'Payment submitted successfully. It will be reviewed by the provider.')
+            return redirect('customer:payment_list')
+    else:
+        # Pre-fill with the policy premium amount
+        form = PaymentForm(initial={'amount': policy_record.policy.premium})
+    
+    return render(request, 'customer/make_payment.html', {
+        'form': form,
+        'policy_record': policy_record
+    })

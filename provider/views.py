@@ -6,6 +6,7 @@ from customer.models import Question
 from django.contrib.auth.forms import UserChangeForm
 from customer.models import PolicyRecord  
 from customer.forms import QuestionForm
+from customer.models import Payment
 
 @login_required
 def provider_dashboard_view(request):
@@ -18,6 +19,9 @@ def provider_dashboard_view(request):
         'approved_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Approved').count(),
         'disapproved_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Disapproved').count(),
         'waiting_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Pending').count(),
+        'total_payments': Payment.objects.filter(policy_record__policy__provider=request.user).count(),
+        'pending_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='PENDING').count(),
+        'confirmed_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='CONFIRMED').count(),
     }
     return render(request,'provider/dashboard.html', dict)
 
@@ -262,3 +266,62 @@ def update_question_view(request, pk):
             return redirect('provider:admin-question')
             
     return render(request, 'provider/update_question.html', {'questionForm': questionForm})
+
+
+
+@login_required
+def admin_payment_list(request):
+    """View to display all payments for the provider"""
+    from customer.models import Payment
+    payments = Payment.objects.filter(policy_record__policy__provider=request.user)
+    return render(request, 'provider/admin_payment_list.html', {'payments': payments})
+
+@login_required
+def admin_payment_detail(request, payment_id):
+    """View to display payment details and confirm/reject payment"""
+    from customer.models import Payment
+    from django.contrib import messages
+    from django.shortcuts import get_object_or_404
+    payment = get_object_or_404(Payment, 
+                               id=payment_id, 
+                               policy_record__policy__provider=request.user)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        comment = request.POST.get('admin_comment', '')
+        
+        payment.admin_comment = comment
+        
+        if action == 'confirm':
+            payment.status = 'CONFIRMED'
+            
+            # Create notification for the customer
+            create_notification(
+                recipient=payment.policy_record.customer,
+                notification_type='payment_received',
+                title='Payment Confirmed',
+                message=f'Your payment of ${payment.amount} for {payment.policy_record.policy.policy_name} has been confirmed.',
+                related_link=f'/customer/payments/'
+            )
+            
+            messages.success(request, 'Payment has been confirmed.')
+        
+        elif action == 'reject':
+            payment.status = 'REJECTED'
+            
+            # Create notification for the customer
+            create_notification(
+                recipient=payment.policy_record.customer,
+                notification_type='payment_received',
+                title='Payment Rejected',
+                message=f'Your payment of ${payment.amount} for {payment.policy_record.policy.policy_name} has been rejected. Reason: {comment}',
+                related_link=f'/customer/payments/'
+            )
+            
+            messages.warning(request, 'Payment has been rejected.')
+        
+        payment.save()
+        return redirect('provider:admin-payment-list')
+    
+
+    return render(request, 'provider/admin_payment_detail.html', {'payment': payment})

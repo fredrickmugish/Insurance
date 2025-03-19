@@ -1,0 +1,218 @@
+<!-- templates/provider/admin_payment_list.html -->
+{% extends 'provider/provider_dashboard.html' %}
+
+{% block content %}
+<style>
+    .payments-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .payments-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .payments-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .filter-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .filter-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-700);
+        white-space: nowrap;
+    }
+    
+    .filter-select {
+        background-color: white;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 14px;
+        color: var(--gray-700);
+        min-width: 150px;
+        transition: all 0.2s ease;
+    }
+    
+    .payments-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        overflow-x: auto;
+    }
+    
+    .payments-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .payments-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .payments-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .status-confirmed {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .action-btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+    
+    .action-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+</style>
+
+<div class="payments-header">
+    <h2 class="payments-title">Payment Management</h2>
+    <div class="filter-container">
+        <span class="filter-label">Filter by Status:</span>
+        <select id="statusFilter" class="filter-select">
+            <option value="all">All Payments</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+</div>
+
+<div class="payments-table-container">
+    {% if payments %}
+    <table class="payments-table" id="paymentsTable">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Policy</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr class="payment-row" data-status="{{ payment.status|lower }}">
+                <td>{{ payment.policy_record.customer.get_full_name }}</td>
+                <td>{{ payment.policy_record.policy.policy_name }}</td>
+                <td>${{ payment.amount }}</td>
+                <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                <td>{{ payment.payment_method }}</td>
+                <td>
+                    <span class="status-badge status-{{ payment.status|lower }}">
+                        {{ payment.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'provider:admin-payment-detail' payment.id %}" class="action-btn">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-invoice-dollar" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i>
+        <h3>No payments found</h3>
+        <p>There are no payments to display at the moment.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusFilter = document.getElementById('statusFilter');
+        const paymentRows = document.querySelectorAll('.payment-row');
+        
+        statusFilter.addEventListener('change', function() {
+            const selectedStatus = this.value;
+            
+            paymentRows.forEach(row => {
+                if (selectedStatus === 'all' || row.dataset.status === selectedStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

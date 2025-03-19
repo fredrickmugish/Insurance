@@ -61,3 +61,31 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.notification_type} for {self.recipient.username}"
+
+class Payment(models.Model):
+    PAYMENT_STATUS = (
+        ('PENDING', 'Pending'),
+        ('CONFIRMED', 'Confirmed'),
+        ('REJECTED', 'Rejected'),
+    )
+    
+    PAYMENT_METHODS = (
+        ('Bank Transfer', 'Bank Transfer'),
+        ('Mobile Money', 'Mobile Money'),
+        ('Credit Card', 'Credit Card'),
+        ('PayPal', 'PayPal'),
+        ('Cash', 'Cash'),
+    )
+    
+    policy_record = models.ForeignKey(PolicyRecord, on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateField(null=True, blank=True)  # Made optional since it might not be needed for all payments
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='PENDING')
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHODS, default='Bank Transfer')
+    receipt_image = models.ImageField(upload_to='payment_receipts/', blank=True, null=True)
+    admin_comment = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Payment of ${self.amount} for {self.policy_record.policy.policy_name}"

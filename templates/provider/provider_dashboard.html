@@ -615,6 +615,14 @@
                   <span>Rejected</span>
               </a>
           </div>
+
+          <div class="sidebar-menu-item">
+            <a href="{% url 'provider:admin-payment-list' %}" class="sidebar-menu-link {% if 'payment' in request.path %}active{% endif %}">
+                <i class="fas fa-money-bill"></i>
+                <span>Payments</span>
+            </a>
+        </div>
+        
           <div class="sidebar-menu-title">Support</div>
           <div class="sidebar-menu-item">
               <a href="{% url 'provider:admin-question' %}" class="sidebar-menu-link {% if 'admin-question' in request.path %}active{% endif %}">
@@ -622,10 +630,6 @@
                   <span>Customer Questions</span>
               </a>
           </div>
-      </div>
-      <div class="sidebar-footer">
-          <p>© 2023 Insurance Provider Portal</p>
-          <p>All rights reserved</p>
       </div>
   </aside>
   <main class="main-content">

@@ -39,5 +39,8 @@ path('reject-request/<int:pk>', views.disapprove_request_view,name='reject-reque
 path('admin-question', views.admin_question_view,name='admin-question'),
 path('update-question/<int:pk>', views.update_question_view,name='update-question'),
 
+path('payments/', views.admin_payment_list, name='admin-payment-list'),
+path('payment/<int:payment_id>/', views.admin_payment_detail, name='admin-payment-detail'),
+
 ]
 

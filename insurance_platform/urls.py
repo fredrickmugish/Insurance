@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -15,3 +17,6 @@ urlpatterns = [
     path('customer/dashboard/', views.customer_dashboard, name='customer_dashboard'),
     path('provider/dashboard/', views.provider_dashboard, name='provider_dashboard'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
