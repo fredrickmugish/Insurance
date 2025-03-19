@@ -1,0 +1,61 @@
+{% extends 'indexbase.html' %}
+{% load static %}
+{% block content %}
+
+
+<section id="services" class="services">
+    <h2>Our Insurance Policies</h2>
+    <p class="subtitle">We offer a wide range of insurance solutions to meet your personal and business needs</p>
+    <div class="service-container">
+        <div class="service-card">
+            <img src="{% static 'image/home.png' %}" alt="Home Insurance">
+            <h3>Home Insurance</h3>
+            <p>Protect your home and belongings from unforeseen events.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/auto.png' %}" alt="Auto Insurance">
+            <h3>Auto Insurance</h3>
+            <p>Keep your car safe with our affordable coverage plans.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/life.png' %}" alt="Life Insurance">
+            <h3>Life Insurance</h3>
+            <p>Secure your family's future with a reliable life insurance policy.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/health.png' %}" alt="Health Insurance">
+            <h3>Health Insurance</h3>
+            <p>Covers medical expenses, hospital stays, and treatments.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/travel.png' %}" alt="Travel Insurance">
+            <h3>Travel Insurance</h3>
+            <p>Protects against trip cancellations, lost luggage, and medical emergencies abroad.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/business.png' %}" alt="Business Insurance">
+            <h3>Business Insurance</h3>
+            <p>Covers businesses from property damage, liability claims, and operational risks.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/disability.png' %}" alt="Disability Insurance">
+            <h3>Disability Insurance</h3>
+            <p>Provides income replacement if a person becomes disabled.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/cyber.png' %}" alt="Cyber Insurance">
+            <h3>Cyber Insurance</h3>
+            <p>Protects against digital threats, data breaches, and cyber attacks.</p>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

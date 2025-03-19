@@ -1,116 +1,447 @@
 {% extends 'customer/customer_dashboard.html' %}
 {% load widget_tweaks %}
+
 {% block content %}
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-  <style type="text/css">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Dashboard Styles */
+    .dashboard-header {
+        margin-bottom: 30px;
     }
-
-    .order-card {
-      color: rgb(255, 255, 255);
+    
+    .dashboard-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 10px;
     }
-
-    .bg-c-blue {
-      background: #04868f;
+    
+    .dashboard-subtitle {
+        font-size: 16px;
+        color: var(--gray-600);
     }
-
-    .bg-c-green {
-      background:#4C51BF;
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
     }
-
-    .bg-c-yellow {
-      background: #F56565;
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s forwards;
     }
-
-    .bg-c-pink {
-      background: #663a30;
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-
-
-    .card {
-      
-      -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-      border: 1px solid black;
-      margin-bottom: 30px;
-      -webkit-transition: all 0.3s ease-in-out;
-      transition: all 0.3s ease-in-out;
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
-
-    .card .card-block {
-      padding: 25px;
+    
+    .stat-card-primary {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
     }
-
-    .order-card i {
-      font-size: 26px;
+    
+    .stat-card-success {
+        background: linear-gradient(135deg, #10b981, #059669);
     }
-
-    .f-left {
-      float: left;
+    
+    .stat-card-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
     }
-
-    .f-right {
-      float: right;
+    
+    .stat-card-info {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
     }
-    header {
-    left: 0px;
-    right: 0px;
-  }
-  </style>
-</head>
+    
+    .stat-card-content {
+        padding: 25px;
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .stat-card-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.3);
+        z-index: 0;
+    }
+    
+    .stat-card-bg-icon {
+        position: absolute;
+        bottom: -15px;
+        right: -15px;
+        font-size: 120px;
+        color: rgba(255, 255, 255, 0.07);
+        z-index: 0;
+    }
+    
+    .stat-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 20px;
+    }
+    
+    .stat-card-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 5px;
+    }
+    
+    .stat-card-description {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: auto;
+    }
+    
+    /* Dashboard Sections */
+    .dashboard-section {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s forwards;
+        animation-delay: 0.3s;
+    }
+    
+    .dashboard-section:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 20px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .section-action {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+    }
+    
+    .section-action:hover {
+        color: var(--primary-dark);
+    }
+    
+    .section-action i {
+        transition: transform 0.2s ease;
+    }
+    
+    .section-action:hover i {
+        transform: translateX(3px);
+    }
+    
 
+    /* Recent Activity */
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gray-100);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .activity-content {
+        flex-grow: 1;
+    }
+    
+    .activity-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 5px;
+    }
+    
+    .activity-description {
+        font-size: 13px;
+        color: var(--gray-600);
+    }
+    
+    .activity-time {
+        font-size: 12px;
+        color: var(--gray-500);
+        white-space: nowrap;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .quick-actions {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-title {
+            font-size: 24px;
+        }
+        
+        .dashboard-subtitle {
+            font-size: 14px;
+        }
+        
+        .stat-card-value {
+            font-size: 28px;
+        }
+        
+        .dashboard-section {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+        }
+        
+        .section-action {
+            font-size: 12px;
+        }
+        
+        .activity-item {
+            flex-direction: column;
+        }
+        
+        .activity-icon {
+            margin-bottom: 10px;
+        }
+        
+        .activity-time {
+            margin-top: 5px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-title {
+            font-size: 22px;
+        }
+        
+        .dashboard-section {
+            padding: 15px;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-green order-card">
-        <div class="card-block">
-          <h6 class="m-b-20"> <a href="{% url 'customer:apply-policy' %}" style="text-decoration: none;color:white;">Available Policy</a> </h6>
-          <h2 class="text-right"><i class="fa fa-product-hunt f-left"></i><span>{{available_policy}}</span></h2>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-green order-card">
-        <div class="card-block">
-          <h6 class="m-b-20"><a href="{% url 'customer:history' %}" style="text-decoration: none;color:white;">Applied Policy</a> </h6>
-          <h2 class="text-right"><i class="fa fa-product-hunt f-left"></i><span>{{applied_policy}}</span></h2>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-green order-card">
-        <div class="card-block">
-          <h6 class="m-b-20"><a href="{% url 'customer_dashboard' %}" style="text-decoration: none;color:white;">Policy Categories</a></h6>
-          <h2 class="text-right"><i class="fa fa-list-alt f-left"></i><span>{{total_category}}</span></h2>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 col-xl-3">
-      <div class="card bg-c-green order-card">
-        <div class="card-block">
-          <h6 class="m-b-20"><a href="{% url 'customer:question-history' %}" style="text-decoration: none;color:white;">Total Question Asked</a></h6>
-          <h2 class="text-right"><i class="fa fa-question-circle f-left"></i><span>{{total_question}}</span></h2>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="dashboard-header">
+    <h1 class="dashboard-title">Welcome back, {{request.user.first_name}}!</h1>
+    <p class="dashboard-subtitle">Here's an overview of your insurance portfolio and recent activities.</p>
 </div>
 
-<br><br><br><br><br><br>
+<div class="stats-grid">
+    <a href="{% url 'customer:apply-policy' %}" class="stat-card stat-card-primary">
+        <div class="stat-card-content">
+            <i class="fas fa-file-signature stat-card-icon"></i>
+            <i class="fas fa-file-signature stat-card-bg-icon"></i>
+            <div class="stat-card-title">Available Policies</div>
+            <div class="stat-card-value">{{available_policy}}</div>
+            <div class="stat-card-description">Explore new insurance options</div>
+        </div>
+    </a>
+    
+    <a href="{% url 'customer:history' %}" class="stat-card stat-card-success">
+        <div class="stat-card-content">
+            <i class="fas fa-check-circle stat-card-icon"></i>
+            <i class="fas fa-check-circle stat-card-bg-icon"></i>
+            <div class="stat-card-title">Applied Policies</div>
+            <div class="stat-card-value">{{applied_policy}}</div>
+            <div class="stat-card-description">View your active policies</div>
+        </div>
+    </a>
+    
+    <a href="{% url 'customer_dashboard' %}" class="stat-card stat-card-info">
+        <div class="stat-card-content">
+            <i class="fas fa-list-alt stat-card-icon"></i>
+            <i class="fas fa-list-alt stat-card-bg-icon"></i>
+            <div class="stat-card-title">Policy Categories</div>
+            <div class="stat-card-value">{{total_category}}</div>
+            <div class="stat-card-description">Browse by insurance type</div>
+        </div>
+    </a>
+    
+    <a href="{% url 'customer:question-history' %}" class="stat-card stat-card-warning">
+        <div class="stat-card-content">
+            <i class="fas fa-question-circle stat-card-icon"></i>
+            <i class="fas fa-question-circle stat-card-bg-icon"></i>
+            <div class="stat-card-title">Questions Asked</div>
+            <div class="stat-card-value">{{total_question}}</div>
+            <div class="stat-card-description">View your support inquiries</div>
+        </div>
+    </a>
+</div>
 
-<script src="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
 
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Recent Activity</h2>
+        <a href="#" class="section-action">View All <i class="fas fa-chevron-right"></i></a>
+    </div>
+    
+    <div class="activity-list">
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div class="activity-content">
+                <h3 class="activity-title">Policy Application</h3>
+                <p class="activity-description">You applied for a new insurance policy</p>
+            </div>
+            <div class="activity-time">2 days ago</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <div class="activity-content">
+                <h3 class="activity-title">Question Answered</h3>
+                <p class="activity-description">Support team responded to your inquiry</p>
+            </div>
+            <div class="activity-time">1 week ago</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="activity-content">
+                <h3 class="activity-title">Payment Reminder</h3>
+                <p class="activity-description">Your next premium payment is due soon</p>
+            </div>
+            <div class="activity-time">2 weeks ago</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add staggered animation to stat cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const statCards = document.querySelectorAll('.stat-card');
+        
+        statCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Add responsive behavior for activity items on mobile
+        function adjustActivityLayout() {
+            const activityItems = document.querySelectorAll('.activity-item');
+            const isMobile = window.innerWidth <= 768;
+            
+            activityItems.forEach(item => {
+                if (isMobile) {
+                    const timeElement = item.querySelector('.activity-time');
+                    const contentElement = item.querySelector('.activity-content');
+                    
+                    // Move time element inside content on mobile
+                    if (timeElement && contentElement && timeElement.parentElement === item) {
+                        contentElement.appendChild(timeElement);
+                    }
+                } else {
+                    const timeElement = item.querySelector('.activity-time');
+                    const contentElement = item.querySelector('.activity-content');
+                    
+                    // Move time element back to original position on desktop
+                    if (timeElement && contentElement && timeElement.parentElement === contentElement) {
+                        item.appendChild(timeElement);
+                    }
+                }
+            });
+        }
+        
+        // Run on load and on resize
+        adjustActivityLayout();
+        window.addEventListener('resize', adjustActivityLayout);
+    });
+</script>
 {% endblock content %}

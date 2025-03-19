@@ -1,66 +1,235 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
+<style>
+  /* Modern Table Styles */
+  .customer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .customer-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gray-900);
+    position: relative;
+    padding-left: 15px;
+  }
+  
+  .customer-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  
+  .add-customer-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .add-customer-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+  }
+  
+  .customers-table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .customers-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .customers-table th {
+    background-color: var(--gray-50);
+    color: var(--gray-700);
+    font-weight: 600;
+    text-align: left;
+    padding: 16px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  
+  .customers-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+  }
+  
+  .customers-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .customers-table tr:hover td {
+    background-color: var(--gray-50);
+  }
+  
+  .customer-email {
+    color: var(--gray-500);
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-edit, .btn-delete {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-edit {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary);
+  }
+  
+  .btn-edit:hover {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .btn-delete {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+  }
+  
+  .btn-delete:hover {
+    background-color: var(--danger);
+    color: white;
+  }
+  
+  .empty-state {
+    padding: 40px;
+    text-align: center;
+    color: var(--gray-500);
+  }
+  
+  .empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .customers-table th:nth-child(4),
+    .customers-table td:nth-child(4) {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .customer-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+    
+    .customers-table th:nth-child(3),
+    .customers-table td:nth-child(3) {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .customers-table th:nth-child(1),
+    .customers-table td:nth-child(1) {
+      display: none;
+    }
+  }
+</style>
 
-<head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-    <style media="screen">
-        a:link {
-            text-decoration: none;
-        }
-        h6 {
-            text-align: center;
-        }
-        .row {
-            margin: 100px;
-        }
-        label #sidebar_btn {
-            z-index: 1;
-            color: #fff;
-            position: fixed;
-            cursor: pointer;
-            left: 300px;
-            padding-left: 60px;
-            margin-top:15px;
-            font-size: 20px;
-            transition: 0.5s;
-            transition-property: color;
-        }
-    </style>
-</head>
-
-<br><br>
-<div class="container">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h6 class="panel-title">Users</h6>
-        </div>
-        <table class="table table-hover" id="dev-table">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Update</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            {% for user in customers %}
-            <tr>
-                <td>{{user.username}}</td>
-                <td>{{user.first_name}}</td>
-                <td>{{user.last_name}}</td>
-                <td>{{user.email}}</td>
-                <td><a class="btn btn-primary btn-xs" href="{% url 'provider:update-customer' user.id %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-                <td><a class="btn btn-danger btn-xs" href="{% url 'provider:delete-customer' user.id %}"><span class="glyphicon glyphicon-trash"></span></a></td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+<div class="customer-header">
+  <h2 class="customer-title">Customer Management</h2>
+  <button class="add-customer-btn">
+    <i class="fas fa-plus"></i> Add Customer
+  </button>
 </div>
 
-<br><br><br><br><br><br>
+<div class="customers-table-container">
+  {% if customers %}
+  <table class="customers-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in customers %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td class="customer-email">{{ user.email }}</td>
+        <td>
+          <div class="action-buttons">
+            <a href="{% url 'provider:update-customer' user.id %}" class="btn-edit" title="Edit customer">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'provider:delete-customer' user.id %}" class="btn-delete" title="Delete customer">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-users"></i>
+    <h3>No customers found</h3>
+    <p>There are no customers in the system yet.</p>
+  </div>
+  {% endif %}
+</div>
 {% endblock content %}

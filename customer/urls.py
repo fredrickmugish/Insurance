@@ -14,4 +14,6 @@ path('history', views.history_view,name='history'),
 path('ask-question', views.ask_question_view,name='ask-question'),
 path('question-history', views.question_history_view,name='question-history'),
 
+path('contact/', views.contact_view, name='contact'),
+
 ]

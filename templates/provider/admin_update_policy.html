@@ -1,61 +1,236 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
 {% load static %}
 
-<head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<style>
+    /* Update Policy List Styles */
+    .policy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .policy-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .policy-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .policy-subtitle {
+        font-size: 14px;
+        color: var(--gray-600);
+        margin-top: 5px;
+    }
+    
+    .add-policy-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .add-policy-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .policies-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .policies-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+    
+    .policies-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    
+    .policies-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .policies-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .policies-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .policy-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .policy-provider {
+        font-weight: 500;
+    }
+    
+    .creation-date {
+        color: var(--gray-500);
+        font-size: 13px;
+    }
+    
+    .action-column {
+        width: 100px;
+        text-align: center;
+    }
+    
+    .btn-edit {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-edit:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .policies-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+</style>
 
-    <style media="screen">
-        a:link {
-            text-decoration: none;
-        }
-        h6 {
-            text-align: center;
-        }
-        .row {
-            margin: 100px;
-        }
-    </style>
-</head>
-
-<br><br>
-<div class="container">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h6 class="panel-title">Update Policy - Provider: {{ request.user.username }}</h6>
-        </div>
-        <table class="table table-hover" id="dev-table">
-            <thead>
-                <tr>
-                    <th>Serial No.</th>
-                    <th>Policy Name</th>
-                    <th>Policy Provider</th>
-                    <th>Category</th>
-                    <th>Sum Assurance</th>
-                    <th>Premium</th>
-                    <th>Tenure</th>
-                    <th>Creation Date</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-            {% for t in policies %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{t.policy_name}}</td>
-                <td>{{t.provider.username}}</td>
-                <td>{{t.category}}</td>
-                <td>{{t.sum_assurance}}</td>
-                <td>{{t.premium}}</td>
-                <td>{{t.tenure}}</td>
-                <td>{{t.creation_date}}</td>
-                <td><a class="btn btn-danger btn-xs" href="{% url 'provider:update-policy' t.id %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-            </tr>
-            {% endfor %}
-        </table>
+<div class="policy-header">
+    <div>
+        <h2 class="policy-title">Update Policies</h2>
+        <p class="policy-subtitle">Provider: {{ request.user.username }}</p>
     </div>
+    <a href="admin-add-policy" class="add-policy-btn">
+        <i class="fas fa-plus"></i> Add Policy
+    </a>
 </div>
 
-<br><br><br><br><br><br>
+<div class="policies-table-container">
+    {% if policies %}
+    <table class="policies-table">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Policy Name</th>
+                <th>Provider</th>
+                <th>Category</th>
+                <th>Sum Assurance</th>
+                <th>Premium</th>
+                <th>Tenure</th>
+                <th>Creation Date</th>
+                <th class="action-column">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in policies %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="policy-name">{{ t.policy_name }}</td>
+                <td class="policy-provider">{{ t.provider.username }}</td>
+                <td><span class="policy-category">{{ t.category }}</span></td>
+                <td class="policy-amount">${{ t.sum_assurance }}</td>
+                <td class="policy-amount">${{ t.premium }}</td>
+                <td>{{ t.tenure }} years</td>
+                <td class="creation-date">{{ t.creation_date }}</td>
+                <td class="action-column">
+                    <a href="{% url 'provider:update-policy' t.id %}" class="btn-edit" title="Edit policy">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>No policies found</h3>
+        <p>There are no insurance policies available to update.</p>
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

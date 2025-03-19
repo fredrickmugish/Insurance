@@ -1,51 +1,186 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
-{%load static%}
-
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Category List Styles */
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
-
-    h6 {
-      text-align: center;
+    
+    .category-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
     }
-
-    .row {
-      margin: 100px;
+    
+    .category-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
     }
-  </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Categories</h6>
-    </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-        <th>Serial No.</th>
-          <th>Category Name</th>
-          <th> Creation Date</th>
-          
-        </tr>
-      </thead>
-      {% for t in categories %}
-      <tr>
-        <td> {{ forloop.counter }}</td>
-        <td> {{t.category_name}}</td>
-        <td>{{t.creation_date}}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+    
+    .add-category-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .add-category-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .categories-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .categories-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .categories-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .categories-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .categories-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .categories-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .category-name {
+        font-weight: 500;
+    }
+    
+    .creation-date {
+        color: var(--gray-500);
+        width: 180px;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .creation-date {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .category-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .categories-table th,
+        .categories-table td {
+            padding: 12px 15px;
+        }
+    }
+</style>
+
+<div class="category-header">
+    <h2 class="category-title">Insurance Categories</h2>
+    <a href="admin-add-category" class="add-category-btn">
+        <i class="fas fa-plus"></i> Add Category
+    </a>
 </div>
 
-<br><br><br><br><br><br>
+<div class="categories-table-container">
+    {% if categories %}
+    <table class="categories-table">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Category Name</th>
+                <th class="creation-date">Creation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in categories %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="category-name">{{ t.category_name }}</td>
+                <td class="creation-date">{{ t.creation_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-list-alt"></i>
+        <h3>No categories found</h3>
+        <p>There are no insurance categories in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

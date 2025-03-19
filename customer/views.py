@@ -61,3 +61,29 @@ def ask_question_view(request):
 def question_history_view(request):
     questions = Question.objects.filter(customer=request.user)
     return render(request, 'customer/question_history.html', {'questions': questions})
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import ContactMessage
+
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        message_text = request.POST.get('message')
+        
+        # Save to database
+        contact_message = ContactMessage(
+            name=name,
+            email=email,
+            phone=phone,
+            message=message_text
+        )
+        contact_message.save()
+        
+        # Add success message
+        messages.success(request, 'Your message has been sent. We will contact you soon!')
+        return redirect('contact')
+    
+    return render(request, 'contact.html')

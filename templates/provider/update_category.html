@@ -1,69 +1,176 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% load widget_tweaks %}
+
 {% block content %}
-<head>
-  <style media="screen">
-    input[type=text], select,input[type=number] ,input[type=password], textarea{
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-
-  input[type=submit] {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  input[type=submit]:hover {
-    background-color: #45a049;
-  }
-
-
-   label #sidebar_btn {
-      z-index: 1;
-      color: #fff;
-      position: fixed;
-      cursor: pointer;
-      left: 300px;
-      padding-left: 60px;
-      margin-top:15px;
-      font-size: 20px;
-      
-      transition: 0.5s;
-      transition-property: color;
+<style>
+    /* Update Category Form Styles */
+    .form-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        max-width: 600px;
+        margin: 0 auto;
+        animation: fadeIn 0.5s ease forwards;
     }
-    .left_area{
-      margin-top:8px;
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-  </style>
-
-
-</head>
-
-<br><br>
-<h3 style="text-align:center;">UPDATE CATEGORY</h3>
-<div>
-  <form method="post" autocomplete="off" enctype="multipart/form-data" style="margin-left:200px;margin-right:200px;">
-      {% csrf_token %}
-        <label for="first_name">Category Name</label>
-        {% render_field categoryForm.category_name class="form-control" %}
+    
+    .form-header {
+        margin-bottom: 25px;
+        text-align: center;
+    }
+    
+    .form-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 10px;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    
+    .form-title::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .form-subtitle {
+        font-size: 14px;
+        color: var(--gray-600);
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--gray-800);
+        font-size: 14px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--gray-800);
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+    
+    .form-control::placeholder {
+        color: var(--gray-400);
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn-secondary {
+        background-color: var(--gray-200);
+        color: var(--gray-700);
+    }
+    
+    .btn-secondary:hover {
+        background-color: var(--gray-300);
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 25px;
+            margin: 0 15px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .form-container {
+            padding: 20px;
+        }
         
-<br><br>
-    <input type="submit" value="Update">
-  </form>
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h2 class="form-title">Update Category</h2>
+        <p class="form-subtitle">Modify the selected insurance category</p>
+    </div>
+    
+    <form method="post" autocomplete="off" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_category_name" class="form-label">Category Name</label>
+            {% render_field categoryForm.category_name class="form-control" %}
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'provider:admin-update-category' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Update Category
+            </button>
+        </div>
+    </form>
 </div>
-
-
-
-<br><br><br><br><br><br><br><br>
 {% endblock content %}

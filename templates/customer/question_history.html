@@ -1,69 +1,220 @@
 {% extends 'customer/customer_dashboard.html' %}
+
 {% block content %}
-{%load static%}
+{% load static %}
 
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Question History Styles */
+    .questions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;  /* Increased from 20px */
     }
-
-    h6 {
-      text-align: center;
+    
+    .questions-title {
+        font-size: 26px;  /* Increased from 22px */
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 18px;  /* Increased from 15px */
     }
-
-    .row {
-      margin: 100px;
+    
+    .questions-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;  /* Increased from 4px */
+        height: 26px;  /* Increased from 22px */
+        background: var(--primary);
+        border-radius: 2px;
     }
-
-       label #sidebar_btn {
-      z-index: 1;
-      color: #fff;
-      position: fixed;
-      cursor: pointer;
-      left: 300px;
-      padding-left: 60px;
-      margin-top:15px;
-      font-size: 20px;
-      
-      transition: 0.5s;
-      transition-property: color;
+    
+    .ask-question-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 22px;  /* Increased from 10px 20px */
+        font-size: 16px;  /* Increased from 14px */
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;  /* Increased from 8px */
+        transition: all 0.2s ease;
+        text-decoration: none;
     }
-  </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Asked Question History</h6>
-    </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-        <th>Serial No.</th>
-          <th>Question</th>
-            <th>Admin Comment</th> 
-          <th> Asked Date</th>
-          
-          
-        </tr>
-      </thead>
-      {% for t in questions %}
-      <tr>
-        <td> {{ forloop.counter }}</td>
-        <td> {{t.description}}</td>
+    
+    .ask-question-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+        color: white;
+    }
+    
+    .questions-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .questions-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .questions-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;  /* Increased from 14px 16px */
+        font-size: 15px;  /* Increased from 13px */
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .questions-table td {
+        padding: 16px 20px;  /* Increased from 14px 16px */
+        font-size: 15px;  /* Increased from 13px */
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .questions-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .questions-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 70px;  /* Increased from 60px */
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .question-text {
+        font-weight: 500;
+        color: var(--gray-800);
+        max-width: 350px;  /* Increased from 300px */
+        font-size: 15px;  /* Added explicit font size */
+    }
+    
+    .admin-response {
+        color: var(--primary);
+        font-style: italic;
+        font-size: 15px;  /* Added explicit font size */
+    }
+    
+    .no-response {
+        color: var(--gray-400);
+        font-style: italic;
+        font-size: 15px;  /* Added explicit font size */
+    }
+    
+    .asked-date {
+        color: var(--gray-500);
+        font-size: 15px;  /* Increased from 13px */
+        width: 130px;  /* Increased from 120px */
+        white-space: nowrap;
+    }
+    
+    .empty-state {
+        padding: 50px;  /* Increased from 40px */
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 56px;  /* Increased from 48px */
+        margin-bottom: 18px;  /* Increased from 15px */
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        font-size: 20px;  /* Added explicit font size */
+        margin-bottom: 10px;  /* Added margin */
+    }
+    
+    .empty-state p {
+        font-size: 16px;  /* Added explicit font size */
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .questions-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 18px;  /* Increased from 15px */
+        }
+        
+        .questions-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+</style>
 
-        <td>{{t.admin_comment}}</td>
-        <td>{{t.asked_date}}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+<div class="questions-header">
+    <h2 class="questions-title">Question History</h2>
+    <a href="{% url 'customer:ask-question' %}" class="ask-question-btn">
+        <i class="fas fa-plus"></i> Ask New Question
+    </a>
 </div>
 
-<br><br><br><br><br><br>
+<div class="questions-table-container">
+    {% if questions %}
+    <table class="questions-table">
+        <thead>
+            <tr>
+                <th class="serial-number">No.</th>
+                <th>Question</th>
+                <th>Response</th>
+                <th class="asked-date">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in questions %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="question-text">{{ t.description }}</td>
+                <td>
+                    {% if t.admin_comment %}
+                    <span class="admin-response">{{ t.admin_comment }}</span>
+                    {% else %}
+                    <span class="no-response">Awaiting response</span>
+                    {% endif %}
+                </td>
+                <td class="asked-date">{{ t.asked_date|date:"d M Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-question-circle"></i>
+        <h3>No questions yet</h3>
+        <p>You haven't asked any questions yet. Feel free to ask if you need help!</p>
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}

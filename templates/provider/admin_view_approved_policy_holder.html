@@ -1,56 +1,269 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
-{%load static%}
+{% load static %}
 
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Policy Holder Record Styles */
+    .policy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
-
-    h6 {
-      text-align: center;
+    
+    .policy-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
     }
-
-    .row {
-      margin: 100px;
+    
+    .policy-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--success);
+        border-radius: 2px;
     }
-  </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Policy Holder Record</h6>
-    </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-        <th>Serial No.</th>
-          <th>Policy Name</th>
-          <th>Customer Name</th>
-          <th> Applied Date</th>
-          <th>Status</th>
-          
-        </tr>
-      </thead>
-      {% for t in policyrecords %}
-      <tr>
-        <td> {{ forloop.counter }}</td>
-        <td>{{t.policy.policy_name}}</td>
-        <td> {{t.customer}}</td>
-        
-        <td>{{t.creation_date}}</td>
-        <td>{{t.status}}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+    
+    .export-btn {
+        background-color: var(--gray-200);
+        color: var(--gray-700);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .export-btn:hover {
+        background-color: var(--gray-300);
+        transform: translateY(-2px);
+    }
+    
+    .records-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .records-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+    
+    .records-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    
+    .records-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .records-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .records-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .policy-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .customer-name {
+        font-weight: 500;
+    }
+    
+    .creation-date {
+        color: var(--gray-500);
+        font-size: 13px;
+    }
+    
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .status-approved {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .records-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+</style>
+
+<div class="policy-header">
+    <h2 class="policy-title">Approved Applications</h2>
+    <button class="export-btn">
+        <i class="fas fa-download"></i> Export CSV
+    </button>
 </div>
 
-<br><br><br><br><br><br>
+<div class="records-table-container">
+    {% if policyrecords %}
+    <table class="records-table">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Policy Name</th>
+                <th>Customer</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in policyrecords %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="policy-name">{{ t.policy.policy_name }}</td>
+                <td class="customer-name">{{ t.customer }}</td>
+                <td class="creation-date">{{ t.creation_date }}</td>
+                <td>
+                    <span class="status-badge status-approved">{{ t.status }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-check-circle"></i>
+        <h3>No approved applications</h3>
+        <p>There are no approved policy applications in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const exportBtn = document.querySelector('.export-btn');
+        
+        exportBtn.addEventListener('click', function() {
+            // Function to export table data to CSV
+            function exportTableToCSV(filename) {
+                const csv = [];
+                const rows = document.querySelectorAll('.records-table tr');
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const row = [], cols = rows[i].querySelectorAll('td, th');
+                    
+                    for (let j = 0; j < cols.length; j++) {
+                        // Get the text content and clean it up
+                        let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/\s+/g, ' ');
+                        // Remove any HTML from status column
+                        if (j === 4) {
+                            text = text.replace(/APPROVED|PENDING|REJECTED/g, function(match) {
+                                return match;
+                            });
+                        }
+                        // Wrap with quotes to handle commas in the data
+                        row.push('"' + text + '"');
+                    }
+                    csv.push(row.join(','));
+                }
+                
+                // Download CSV file
+                downloadCSV(csv.join('\n'), filename);
+            }
+            
+            function downloadCSV(csv, filename) {
+                const csvFile = new Blob([csv], {type: 'text/csv'});
+                const downloadLink = document.createElement('a');
+                
+                // File name
+                downloadLink.download = filename;
+                // Create a link to the file
+                downloadLink.href = window.URL.createObjectURL(csvFile);
+                // Hide download link
+                downloadLink.style.display = 'none';
+                // Add the link to DOM
+                document.body.appendChild(downloadLink);
+                // Click download link
+                downloadLink.click();
+                // Remove link from DOM
+                document.body.removeChild(downloadLink);
+            }
+            
+            exportTableToCSV('approved_applications.csv');
+        });
+    });
+</script>
 {% endblock content %}

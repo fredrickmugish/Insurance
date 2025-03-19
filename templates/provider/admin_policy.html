@@ -1,168 +1,308 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% load widget_tweaks %}
+
 {% block content %}
-
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <style type="text/css">
-      a:link {
-        text-decoration: none;
-      }
-  
-      .order-card {
-        color: rgb(255, 255, 255);
-      }
-  
-      .bg-c-blue {
-        background: #04868f;
-      }
-  
-      .bg-c-green {
-        background:#4C51BF;
-      }
-  
-      .bg-c-yellow {
-        background: #F56565;
-      }
-  
-      .bg-c-pink {
-        background: #663a30;
-      }
-  
-  
-      .card {
-        
-        -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-        box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-        border: 1px solid black;
-        margin-bottom: 30px;
-        -webkit-transition: all 0.3s ease-in-out;
-        transition: all 0.3s ease-in-out;
-      }
-  
-      .card .card-block {
-        padding: 25px;
-      }
-  
-      .order-card i {
-        font-size: 26px;
-      }
-  
-      .f-left {
-        float: left;
-      }
-  
-      .f-right {
-        float: right;
-      }
-      header {
-      left: 0px;
-      right: 0px;
+<style>
+    /* Policy Management Styles */
+    .section-header {
+        margin-bottom: 25px;
     }
-    </style>
-  </head>
+    
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .section-subtitle {
+        font-size: 14px;
+        color: var(--gray-600);
+    }
+    
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .action-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s forwards;
+        border: none;
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .action-card:nth-child(1) { animation-delay: 0.1s; }
+    .action-card:nth-child(2) { animation-delay: 0.2s; }
+    .action-card:nth-child(3) { animation-delay: 0.3s; }
+    .action-card:nth-child(4) { animation-delay: 0.4s; }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-card-content {
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 140px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+    
+    .action-card-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .action-card:hover .action-card-icon {
+        transform: scale(1.2);
+    }
+    
+    .action-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .action-card-description {
+        font-size: 12px;
+        opacity: 0.8;
+    }
+    
+    .action-card-bg-icon {
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+        font-size: 80px;
+        color: rgba(255, 255, 255, 0.07);
+        z-index: 0;
+    }
+    
+    /* Stats Cards */
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s forwards;
+        border: none;
+    }
+    
+    .stats-card:nth-child(1) { animation-delay: 0.5s; background: linear-gradient(135deg, #4f46e5, #4338ca); }
+    .stats-card:nth-child(2) { animation-delay: 0.6s; background: linear-gradient(135deg, #10b981, #059669); }
+    .stats-card:nth-child(3) { animation-delay: 0.7s; background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .stats-card:nth-child(4) { animation-delay: 0.8s; background: linear-gradient(135deg, #f59e0b, #d97706); }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stats-card-content {
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        color: white;
+        min-height: 140px;
+    }
+    
+    .stats-card-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    
+    .stats-card-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .stats-card-icon {
+        font-size: 20px;
+    }
+    
+    .stats-card-bg-icon {
+        position: absolute;
+        bottom: -15px;
+        right: -15px;
+        font-size: 80px;
+        color: rgba(255, 255, 255, 0.07);
+        z-index: 0;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .action-card-content, .stats-card-content {
+            min-height: 120px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .card-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .action-card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .action-card-title, .stats-card-title {
+            font-size: 14px;
+        }
+        
+        .action-card-description {
+            display: none;
+        }
+    }
+</style>
 
+<div class="section-header">
+    <h2 class="section-title">Policy Management</h2>
+    <p class="section-subtitle">Create, view, update, and delete insurance policies</p>
+</div>
 
-  <div class="container">
-
-    <div class="row">
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"> <a href="admin-view-policy" style="text-decoration: none;color:white;">View Policy</a> </h6>
-            <h2 class="text-right"><i class="fas fa-eye f-left"></i></h2>       
-          </div>
+<div class="card-grid">
+    <a href="admin-view-policy" class="action-card">
+        <div class="action-card-content">
+            <i class="fas fa-eye action-card-icon"></i>
+            <i class="fas fa-file-alt action-card-bg-icon"></i>
+            <h3 class="action-card-title">View Policies</h3>
+            <p class="action-card-description">Browse all policies</p>
         </div>
-      </div>
-  
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-add-policy" style="text-decoration: none;color:white;">Add policy</a> </h6>
-            <h2 class="text-right"><i class="fas fa-plus f-left"></i></h2>    
-          </div>
+    </a>
+    
+    <a href="admin-add-policy" class="action-card">
+        <div class="action-card-content">
+            <i class="fas fa-plus action-card-icon"></i>
+            <i class="fas fa-file-medical action-card-bg-icon"></i>
+            <h3 class="action-card-title">Add Policy</h3>
+            <p class="action-card-description">Create new policy</p>
         </div>
-      </div>
-  
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-update-policy" style="text-decoration: none;color:white;">Update Policy</a> </h6>
-            <h2 class="text-right"><i class="fas fa-edit f-left"></i></h2>    
-          </div>
+    </a>
+    
+    <a href="admin-update-policy" class="action-card">
+        <div class="action-card-content">
+            <i class="fas fa-edit action-card-icon"></i>
+            <i class="fas fa-file-signature action-card-bg-icon"></i>
+            <h3 class="action-card-title">Update Policy</h3>
+            <p class="action-card-description">Modify policies</p>
         </div>
-      </div>
-
-            <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-delete-policy" style="text-decoration: none;color:white;">Delete Policy</a> </h6>
-            <h2 class="text-right"><i class="fas fa-trash f-left"></i></h2>    
-          </div>
+    </a>
+    
+    <a href="admin-delete-policy" class="action-card">
+        <div class="action-card-content">
+            <i class="fas fa-trash action-card-icon"></i>
+            <i class="fas fa-file-excel action-card-bg-icon"></i>
+            <h3 class="action-card-title">Delete Policy</h3>
+            <p class="action-card-description">Remove policies</p>
         </div>
-      </div>
-     
-  
-     
-    </div>
+    </a>
+</div>
 
-    <div class="row">
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"> <a href="admin-view-policy-holder" style="text-decoration: none;color:white;">Total Applied Policy Holder</a> </h6>
-            <h2 class="text-right"><i class="fas fa-user-cog f-left"></i><span>{{total_policy_holder}}</span></h2>
-            
-          </div>
+<div class="section-header">
+    <h2 class="section-title">Policy Applications</h2>
+    <p class="section-subtitle">Manage customer policy applications</p>
+</div>
+
+<div class="card-grid">
+    <a href="admin-view-policy-holder" class="stats-card">
+        <div class="stats-card-content">
+            <h3 class="stats-card-title">Total Applications</h3>
+            <div class="stats-card-value">
+                <i class="fas fa-user-cog stats-card-icon"></i>
+                {{ total_policy_holder }}
+            </div>
+            <i class="fas fa-user-cog stats-card-bg-icon"></i>
         </div>
-      </div>
-  
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-view-approved-policy-holder" style="text-decoration: none;color:white;">Approved Policy Holder</a> </h6>
-            <h2 class="text-right"><i class="fas fa-user-check f-left"></i><span>{{approved_policy_holder}}</span></h2>
-            
-          </div>
+    </a>
+    
+    <a href="admin-view-approved-policy-holder" class="stats-card">
+        <div class="stats-card-content">
+            <h3 class="stats-card-title">Approved</h3>
+            <div class="stats-card-value">
+                <i class="fas fa-user-check stats-card-icon"></i>
+                {{ approved_policy_holder }}
+            </div>
+            <i class="fas fa-user-check stats-card-bg-icon"></i>
         </div>
-      </div>
-  
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-view-disapproved-policy-holder" style="text-decoration: none;color:white;">Disapproved Policy Holder</a></h6>
-           <h2 class="text-right"><i class="fas fa-user-times f-left"></i><span>{{disapproved_policy_holder}}</span></h2>
-            
-          </div>
+    </a>
+    
+    <a href="admin-view-disapproved-policy-holder" class="stats-card">
+        <div class="stats-card-content">
+            <h3 class="stats-card-title">Rejected</h3>
+            <div class="stats-card-value">
+                <i class="fas fa-user-times stats-card-icon"></i>
+                {{ disapproved_policy_holder }}
+            </div>
+            <i class="fas fa-user-times stats-card-bg-icon"></i>
         </div>
-      </div>
-  
-      <div class="col-md-4 col-xl-3">
-        <div class="card bg-c-green order-card">
-          <div class="card-block">
-            <h6 class="m-b-20"><a href="admin-view-waiting-policy-holder" style="text-decoration: none;color:white;">Policy Holder Waiting For Approval</a></h6>
-            <h2 class="text-right"><i class="fas fa-user-clock f-left"></i><span>{{waiting_policy_holder}}</span></h2>
-            
-          </div>
+    </a>
+    
+    <a href="admin-view-waiting-policy-holder" class="stats-card">
+        <div class="stats-card-content">
+            <h3 class="stats-card-title">Pending</h3>
+            <div class="stats-card-value">
+                <i class="fas fa-user-clock stats-card-icon"></i>
+                {{ waiting_policy_holder }}
+            </div>
+            <i class="fas fa-user-clock stats-card-bg-icon"></i>
         </div>
-      </div>
-
-      
-    </div>
-  </div>
-
-
-<br><br><br><br><br><br><br><br><br><br>
-
-<script src="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-
-
+    </a>
+</div>
 {% endblock content %}

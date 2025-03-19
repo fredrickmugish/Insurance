@@ -1,72 +1,281 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
-{%load static%}
+{% load static %}
 
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Customer Questions Styles */
+    .questions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
-
-    h6 {
-      text-align: center;
+    
+    .questions-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
     }
-
-    .row {
-      margin: 100px;
+    
+    .questions-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
     }
-
-       label #sidebar_btn {
-      z-index: 1;
-      color: #fff;
-      position: fixed;
-      cursor: pointer;
-      left: 300px;
-      padding-left: 60px;
-      margin-top:15px;
-      font-size: 20px;
-      
-      transition: 0.5s;
-      transition-property: color;
+    
+    .filter-dropdown {
+        background-color: white;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        padding: 8px 15px;
+        font-size: 14px;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
-  </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Questions</h6>
-    </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-            <th>Serial No.</th>
-          <th>Customer Name</th>
-          <th> Problem</th>
-          <th> Admin Comment</th>
+    
+    .filter-dropdown:hover {
+        border-color: var(--primary);
+    }
+    
+    .questions-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .questions-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+    
+    .questions-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    
+    .questions-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .questions-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .questions-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .customer-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .problem-description {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .admin-comment {
+        color: var(--gray-600);
+        font-style: italic;
+    }
+    
+    .no-comment {
+        color: var(--gray-400);
+        font-style: italic;
+    }
+    
+    .asked-date {
+        color: var(--gray-500);
+        font-size: 13px;
+        white-space: nowrap;
+    }
+    
+    .action-column {
+        width: 100px;
+        text-align: center;
+    }
+    
+    .btn-respond {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-respond:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .questions-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .questions-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+    }
+</style>
 
-          <th> Asked Date</th>
-             <th>Update</th>
-        </tr>
-      </thead>
-      {% for t in questions %}
-      <tr>
-        <td> {{ forloop.counter }}</td>
-        <td> {{t.customer}}</td>
-        <td> {{t.description}}</td>
-        <td> {{t.admin_comment}}</td>
-        <td> {{t.asked_date}}</td>
-        
-        <td><a class="btn btn-danger btn-xs" href="{% url 'provider:update-question' t.id  %}"><span class="glyphicon glyphicon-edit"></span></a></td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+<div class="questions-header">
+    <h2 class="questions-title">Customer Questions</h2>
+    <select class="filter-dropdown" id="statusFilter">
+        <option value="all">All Questions</option>
+        <option value="answered">Answered</option>
+        <option value="unanswered">Unanswered</option>
+    </select>
 </div>
 
-<br><br><br><br><br><br>
+<div class="questions-table-container">
+    {% if questions %}
+    <table class="questions-table" id="questionsTable">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Customer</th>
+                <th>Question</th>
+                <th>Response</th>
+                <th>Asked Date</th>
+                <th class="action-column">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in questions %}
+            <tr class="{% if t.admin_comment %}answered{% else %}unanswered{% endif %}">
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="customer-name">{{ t.customer }}</td>
+                <td class="problem-description" title="{{ t.description }}">{{ t.description }}</td>
+                <td class="admin-comment">
+                    {% if t.admin_comment %}
+                    {{ t.admin_comment }}
+                    {% else %}
+                    <span class="no-comment">No response yet</span>
+                    {% endif %}
+                </td>
+                <td class="asked-date">{{ t.asked_date }}</td>
+                <td class="action-column">
+                    <a href="{% url 'provider:update-question' t.id %}" class="btn-respond" title="Respond to question">
+                        <i class="fas fa-reply"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-question-circle"></i>
+        <h3>No questions found</h3>
+        <p>There are no customer questions in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusFilter = document.getElementById('statusFilter');
+        const table = document.getElementById('questionsTable');
+        const rows = table.getElementsByTagName('tr');
+        
+        statusFilter.addEventListener('change', function() {
+            const filterValue = this.value;
+            
+            // Start from index 1 to skip the header row
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                
+                if (filterValue === 'all') {
+                    row.style.display = '';
+                } else if (filterValue === 'answered' && row.classList.contains('answered')) {
+                    row.style.display = '';
+                } else if (filterValue === 'unanswered' && row.classList.contains('unanswered')) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+        
+        // Add tooltip functionality for truncated descriptions
+        const descriptions = document.querySelectorAll('.problem-description');
+        descriptions.forEach(desc => {
+            if (desc.offsetWidth < desc.scrollWidth) {
+                desc.style.cursor = 'help';
+            }
+        });
+    });
+</script>
 {% endblock content %}

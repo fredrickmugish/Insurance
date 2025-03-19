@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 def index(request):
     return render(request, 'index.html')
 
-
 def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -59,3 +58,10 @@ def customer_dashboard(request):
 @login_required
 def provider_dashboard(request):
     return render(request, 'provider/dashboard.html')
+
+def policies_view(request):
+    return render(request, 'policies.html')
+
+def contact_view(request):
+    return render(request, 'contact.html')
+

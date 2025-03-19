@@ -1,57 +1,267 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
-{%load static%}
+{% load static %}
 
-<head>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
+<style>
+    /* Policy Holder Record Styles */
+    .policy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
-
-    h6 {
-      text-align: center;
+    
+    .policy-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
     }
-
-    .row {
-      margin: 100px;
+    
+    .policy-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
     }
-  </style>
-</head>
-<br><br>
-<div class="container">
-  <div class="panel panel-primary">
-    <div class="panel-heading">
-      <h6 class="panel-title">Policy Holder Record</h6>
-    </div>
-    <table class="table table-hover" id="dev-table">
-      <thead>
-        <tr>
-        <th>Serial No.</th>
-          <th>Policy Name</th>
-          <th>Customer Name</th>
-          <th> Applied Date</th>
-          <th>Status</th>
-          
-        </tr>
-      </thead>
-      {% for t in policyrecords %}
-      <tr>
-        <td> {{ forloop.counter }}</td>
-        <td>{{t.policy.policy_name}}</td>
-
-        <td> {{t.customer}}</td>
+    
+    .search-container {
+        position: relative;
+        max-width: 300px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-500);
+    }
+    
+    .records-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .records-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+    
+    .records-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    
+    .records-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .records-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .records-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .policy-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .customer-name {
+        font-weight: 500;
+    }
+    
+    .creation-date {
+        color: var(--gray-500);
+        font-size: 13px;
+    }
+    
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .status-approved {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .records-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .policy-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
         
-        <td>{{t.creation_date}}</td>
-        <td>{{t.status}}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+        .search-container {
+            width: 100%;
+            max-width: none;
+        }
+    }
+</style>
+
+<div class="policy-header">
+    <h2 class="policy-title">Policy Applications</h2>
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by policy or customer...">
+    </div>
 </div>
 
-<br><br><br><br><br><br>
+<div class="records-table-container">
+    {% if policyrecords %}
+    <table class="records-table" id="policyTable">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Policy Name</th>
+                <th>Customer</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in policyrecords %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="policy-name">{{ t.policy.policy_name }}</td>
+                <td class="customer-name">{{ t.customer }}</td>
+                <td class="creation-date">{{ t.creation_date }}</td>
+                <td>
+                    {% if t.status == 'PENDING' %}
+                    <span class="status-badge status-pending">Pending</span>
+                    {% elif t.status == 'APPROVED' %}
+                    <span class="status-badge status-approved">Approved</span>
+                    {% else %}
+                    <span class="status-badge status-rejected">Rejected</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>No applications found</h3>
+        <p>There are no policy applications in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('policyTable');
+        const rows = table.getElementsByTagName('tr');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            // Start from index 1 to skip the header row
+            for (let i = 1; i < rows.length; i++) {
+                const policyName = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+                const customerName = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+                
+                if (policyName.includes(searchTerm) || customerName.includes(searchTerm)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        });
+    });
+</script>
 {% endblock content %}

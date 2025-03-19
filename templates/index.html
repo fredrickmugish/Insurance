@@ -1,27 +1,226 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Insurance Platform</title>
-    <style>
-        .container {
-            text-align: center;
-            margin-top: 100px;
-        }
-        .btn {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to Insurance Platform</h1>
-        <div>
-            <a href="{% url 'login' %}"><button class="btn">Login</button></a>
-            <a href="{% url 'signup' %}"><button class="btn">Register</button></a>
+{% extends 'indexbase.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section id="home" class="hero">
+    <div class="hero-content">
+        <h1>Secure Your Future with Confidence</h1>
+        <p>Comprehensive insurance solutions designed to protect what matters most to you. With years of experience and a commitment to excellence, we offer peace of mind and financial security. Our expert team is here to guide you through the process and help you choose the best insurance options for your unique needs.</p>
+        <a href="#services" class="cta-button">Explore Our Policies</a>
+    </div>
+</section>
+
+<section id="services" class="services">
+    <h2>Our Insurance Policies</h2>
+    <p class="subtitle">We offer a wide range of insurance solutions to meet your personal and business needs</p>
+    <div class="service-container">
+        <div class="service-card">
+            <img src="{% static 'image/home.png' %}" alt="Home Insurance">
+            <h3>Home Insurance</h3>
+            <p>Protect your home and belongings from unforeseen events.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/auto.png' %}" alt="Auto Insurance">
+            <h3>Auto Insurance</h3>
+            <p>Keep your car safe with our affordable coverage plans.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/life.png' %}" alt="Life Insurance">
+            <h3>Life Insurance</h3>
+            <p>Secure your family's future with a reliable life insurance policy.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/health.png' %}" alt="Health Insurance">
+            <h3>Health Insurance</h3>
+            <p>Covers medical expenses, hospital stays, and treatments.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/travel.png' %}" alt="Travel Insurance">
+            <h3>Travel Insurance</h3>
+            <p>Protects against trip cancellations, lost luggage, and medical emergencies abroad.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/business.png' %}" alt="Business Insurance">
+            <h3>Business Insurance</h3>
+            <p>Covers businesses from property damage, liability claims, and operational risks.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/disability.png' %}" alt="Disability Insurance">
+            <h3>Disability Insurance</h3>
+            <p>Provides income replacement if a person becomes disabled.</p>
+        </div>
+
+        <div class="service-card">
+            <img src="{% static 'image/cyber.png' %}" alt="Cyber Insurance">
+            <h3>Cyber Insurance</h3>
+            <p>Protects against digital threats, data breaches, and cyber attacks.</p>
         </div>
     </div>
-</body>
-</html>
+</section>
+
+
+<style>
+/* Additional responsive styles */
+@media (max-width: 1200px) {
+    .service-container {
+        gap: 1.5rem;
+    }
+    
+    .service-card {
+        flex: 1 1 calc(33.333% - 1.5rem);
+        max-width: calc(33.333% - 1.5rem);
+    }
+}
+
+@media (max-width: 992px) {
+    .service-card {
+        flex: 1 1 calc(50% - 1.5rem);
+        max-width: calc(50% - 1.5rem);
+    }
+    
+    .contact-container {
+        flex-direction: column;
+    }
+    
+    .contact-info, .contact-form {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .contact-info {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .services h2 {
+        font-size: 2.2rem;
+    }
+    
+    .service-card {
+        padding: 1.5rem;
+    }
+    
+    .contact-details div span {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 6rem 1rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .service-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .services, .contact {
+        padding: 3rem 1rem;
+    }
+    
+    .contact-form {
+        padding: 1.5rem;
+    }
+    
+    .contact-form input, 
+    .contact-form textarea {
+        padding: 0.8rem;
+    }
+    
+    .contact-details div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .contact-details div i {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Image responsiveness in service cards */
+.service-card img {
+    max-width: 80px;
+    height: auto;
+    margin: 0 auto 1rem;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Improve form responsiveness */
+.contact-form input, 
+.contact-form textarea, 
+.contact-form button {
+    width: 100%;
+}
+
+/* Fix for very small screens */
+@media (max-width: 350px) {
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .cta-button {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+</style>
+
+<script>
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Form submission handling (prevent default for demo)
+document.querySelector('.contact-form form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Thank you for your message! We will get back to you soon.');
+    this.reset();
+});
+</script>
+
+{% endblock %}

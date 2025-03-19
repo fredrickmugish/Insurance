@@ -1,68 +1,298 @@
 {% extends 'provider/provider_dashboard.html' %}
+
 {% block content %}
 {% load static %}
 
-<head>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<style>
+    /* Policy Holder Record Styles */
+    .policy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .policy-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .policy-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .filter-dropdown {
+        background-color: white;
+        border: 1px solid var(--gray-300);
+        border-radius: 8px;
+        padding: 8px 15px;
+        font-size: 14px;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-dropdown:hover {
+        border-color: var(--primary);
+    }
+    
+    .records-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        overflow-x: auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .records-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+    
+    .records-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        white-space: nowrap;
+    }
+    
+    .records-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .records-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .records-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 80px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .policy-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .customer-name {
+        font-weight: 500;
+    }
+    
+    .creation-date {
+        color: var(--gray-500);
+        font-size: 13px;
+    }
+    
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .status-approved {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .action-column {
+        text-align: right;
+        white-space: nowrap;
+    }
+    
+    .btn-action {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+    
+    .btn-approve {
+        background-color: var(--success);
+        color: white;
+    }
+    
+    .btn-approve:hover {
+        background-color: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-reject {
+        background-color: var(--danger);
+        color: white;
+        margin-left: 8px;
+    }
+    
+    .btn-reject:hover {
+        background-color: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .records-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+</style>
 
-    <style media="screen">
-        a:link {
-            text-decoration: none;
-        }
-        h6 {
-            text-align: center;
-        }
-        .row {
-            margin: 100px;
-        }
-    </style>
-</head>
-
-<br><br>
-<div class="container">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h6 class="panel-title">Policy Holder Record</h6>
-        </div>
-        <table class="table table-hover" id="dev-table">
-            <thead>
-                <tr>
-                    <th>Serial No.</th>
-                    <th>Policy Name</th>
-                    <th>Customer Name</th>
-                    <th>Applied Date</th>
-                    <th>Status</th>
-                    <th class="text-right">Action</th>
-                </tr>
-            </thead>
-            {% for t in policyrecords %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{t.policy.policy_name}}</td>
-                <td>{{t.customer.username}}</td>
-                <td>{{t.creation_date}}</td>
-                <td>{{t.status}}</td>
-                {% if t.status == 'PENDING' %}
-                <td class="text-right">
-                    <button class="btn btn-primary badge-pill" style="width: 120px;">
-                        <a style="text-decoration: none;color: white;" href="{% url 'provider:approve-request' t.id %}">Approve</a>
-                    </button>
-                    <button class="btn btn-danger badge-pill" style="width: 80px;">
-                        <a style="text-decoration: none;color: white;" href="{% url 'provider:reject-request' t.id %}">Reject</a>
-                    </button>
-                </td>
-                {% else %}
-                <td class="text-right">
-                    <span style="color:red;font-size:20px;" class="label success">{{t.status}}</span>
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+<div class="policy-header">
+    <h2 class="policy-title">Policy Applications</h2>
+    <select class="filter-dropdown">
+        <option value="all">All Applications</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+    </select>
 </div>
 
-<br><br><br><br><br><br>
+<div class="records-table-container">
+    {% if policyrecords %}
+    <table class="records-table">
+        <thead>
+            <tr>
+                <th class="serial-number">Serial No.</th>
+                <th>Policy Name</th>
+                <th>Customer</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+                <th class="action-column">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in policyrecords %}
+            <tr>
+                <td class="serial-number">{{ forloop.counter }}</td>
+                <td class="policy-name">{{ t.policy.policy_name }}</td>
+                <td class="customer-name">{{ t.customer.username }}</td>
+                <td class="creation-date">{{ t.creation_date }}</td>
+                <td>
+                    {% if t.status == 'PENDING' %}
+                    <span class="status-badge status-pending">Pending</span>
+                    {% elif t.status == 'APPROVED' %}
+                    <span class="status-badge status-approved">Approved</span>
+                    {% else %}
+                    <span class="status-badge status-rejected">Rejected</span>
+                    {% endif %}
+                </td>
+                <td class="action-column">
+                    {% if t.status == 'PENDING' %}
+                    <a href="{% url 'provider:approve-request' t.id %}" class="btn-action btn-approve">
+                        <i class="fas fa-check"></i> Approve
+                    </a>
+                    <a href="{% url 'provider:reject-request' t.id %}" class="btn-action btn-reject">
+                        <i class="fas fa-times"></i> Reject
+                    </a>
+                    {% else %}
+                    <span class="status-badge {% if t.status == 'APPROVED' %}status-approved{% else %}status-rejected{% endif %}">
+                        {{ t.status }}
+                    </span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>No applications found</h3>
+        <p>There are no policy applications in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterDropdown = document.querySelector('.filter-dropdown');
+        const tableRows = document.querySelectorAll('.records-table tbody tr');
+        
+        filterDropdown.addEventListener('change', function() {
+            const selectedValue = this.value.toUpperCase();
+            
+            tableRows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(5)');
+                const statusText = statusCell.textContent.trim().toUpperCase();
+                
+                if (selectedValue === 'ALL' || statusText.includes(selectedValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
 {% endblock content %}

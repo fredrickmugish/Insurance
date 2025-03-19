@@ -1,214 +1,697 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en" dir="ltr">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  
-
-  <style media="screen">
-    a:link {
-      text-decoration: none;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Gill Sans", sans-serif;;
-    }
-
-    header {
-      position: fixed;
-      background: #22242A;
-      padding: 20px;
-      width: 100%;
-      z-index: 1;
-    }
-
-    .left_area h3 {
-      color: #fff;
-      margin: 0px;
-      text-transform: uppercase;
-      font-size: 22px;
-      font-weight: 900;
-    }
-
-    .left_area span {
-      color: #19B3D3;
-    }
-
-    .logout_btn {
-      padding: 5px;
-      background: #19B3D3;
-      text-decoration: none;
-      float: right;
-      margin-top: -30px;
-      margin-right: 40px;
-      border-radius: 2px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-      transition: 0.5s;
-
-    }
-
-    .logout_btn:hover {
-      background: #0B87A6;
-    }
-
-    .sidebar {
-      background: #2f323a;
-      margin-top: 70px;
-      padding-top: 30px;
-      position: fixed;
-      left: 0;
-      width: 250px;
-      height: 100%;
-      transition: 0.5s;
-      transition-property: left;
-    }
-
-    .sidebar .profile_image {
-      width: 100px;
-      height: 100px;
-      border-radius: 100px;
-      margin-bottom: 10px;
-    }
-
-    .sidebar h4 {
-      color: #ccc;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .sidebar a {
-      color: #fff;
-      display: block;
-      width: 100%;
-      line-height: 60px;
-      text-decoration: none;
-      padding-left: 40px;
-      box-sizing: border-box;
-      transition: 0.5s;
-
-    }
-
-    .sidebar a:hover {
-      background: #19B3D3;
-    }
-
-    .sidebar i {
-      padding-right: 10px;
-    }
-
-    label #sidebar_btn {
-      z-index: 1;
-      color: #fff;
-      position: fixed;
-      cursor: pointer;
-      left: 300px;
-      padding-left: 30px;
-      font-size: 20px;
-      margin: 5px 0;
-      transition: 0.5s;
-      transition-property: color;
-      margin-top: 17px;
-    }
-
-    label #sidebar_btn:hover {
-      color: #19B3D3;
-    }
-
-    #check:checked~.sidebar {
-      left: -190px;
-    }
-
-    #check:checked~.sidebar a span {
-      display: none;
-    }
-
-    #check:checked~.sidebar a {
-      font-size: 20px;
-      margin-left: 170px;
-      width: 80px;
-    }
-
-    .content {
-      margin-left: 250px;
-      background: url(background.png) no-repeat;
-      background-position: center;
-      background-size: cover;
-      height: 100vh;
-      transition: 0.5s;
-    }
-
-    #check:checked~.content {
-      margin-left: 60px;
-    }
-
-    #check {
-      display: none;
-    }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Provider Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #0ea5e9;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            overflow-x: hidden;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px 0 0;
+            z-index: 100;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .header-brand {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 25px;
+            background: var(--primary);
+            color: white;
+            width: var(--sidebar-width);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .header-brand h3 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-brand span {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .header-search {
+            position: relative;
+        }
+        
+        .header-search input {
+            background: var(--gray-100);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px 10px 40px;
+            width: 300px;
+            font-size: 14px;
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+        
+        .header-search input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 2px var(--primary-dark);
+        }
+        
+        .header-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+        
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .header-user:hover {
+            background: var(--gray-100);
+        }
+        
+        .header-user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gray-200);
+        }
+        
+        .header-user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header-user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .header-user-role {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+        
+        .logout-btn {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-btn:hover {
+            background: var(--gray-200);
+            color: var(--gray-900);
+        }
+        
+        /* Improved Sidebar */
+        .sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: white;
+            box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+            z-index: 99;
+            transition: all var(--transition-speed) ease;
+            overflow-y: auto;
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
+                url('{% static "image/sidebar-bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            padding-top: 20px;
+        }
+        
+       
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        
+        .sidebar-menu-title {
+            padding: 0 25px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+            margin: 20px 0 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-menu-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--gray-300);
+            margin-left: 10px;
+            opacity: 0.5;
+        }
+        
+        .sidebar-menu-item {
+            position: relative;
+            margin: 5px 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .sidebar-menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--gray-700);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+        }
+        
+        .sidebar-menu-link i {
+            font-size: 18px;
+            width: 25px;
+            margin-right: 10px;
+            color: var(--gray-500);
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-menu-link:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu-link:hover i {
+            color: var(--primary);
+        }
+        
+        .sidebar-menu-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+        
+        .sidebar-menu-link.active i {
+            color: white;
+        }
+        
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid rgba(203, 213, 225, 0.5);
+            font-size: 12px;
+            color: var(--gray-500);
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+            transition: all var(--transition-speed) ease;
+        }
+        
+        /* Toggle Sidebar */
+        #sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        #sidebar-toggle:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        /* Collapsed Sidebar */
+        body.sidebar-collapsed .sidebar {
+            width: 80px;
+        }
+        
+        body.sidebar-collapsed .header-brand {
+            width: 80px;
+        }
+        
+        body.sidebar-collapsed .header-brand h3 {
+          display: none;
+      }
+      
+      body.sidebar-collapsed .sidebar-profile {
+          padding: 15px;
+      }
+      
+      body.sidebar-collapsed .sidebar-profile img {
+          width: 50px;
+          height: 50px;
+          margin-bottom: 0;
+      }
+      
+      body.sidebar-collapsed .sidebar-profile h4,
+      body.sidebar-collapsed .sidebar-profile p,
+      body.sidebar-collapsed .sidebar-menu-title,
+      body.sidebar-collapsed .sidebar-footer {
+          display: none;
+      }
+      
+      body.sidebar-collapsed .sidebar-menu-item {
+          margin: 5px;
+      }
+      
+      body.sidebar-collapsed .sidebar-menu-link {
+          padding: 15px 0;
+          justify-content: center;
+      }
+      
+      body.sidebar-collapsed .sidebar-menu-link i {
+          margin-right: 0;
+          font-size: 20px;
+      }
+      
+      body.sidebar-collapsed .sidebar-menu-link span {
+          display: none;
+      }
+      
+      body.sidebar-collapsed .main-content {
+          margin-left: 80px;
+      }
+      
+      /* Mobile Responsive */
+      @media (max-width: 1200px) {
+          .header-search input {
+              width: 200px;
+          }
+      }
+      
+      @media (max-width: 992px) {
+          .header-search {
+              display: none;
+          }
+          
+          .header-user-info {
+              display: none;
+          }
+          
+          .header {
+              padding: 0 15px 0 0;
+          }
+          
+          .logout-btn span {
+              display: none;
+          }
+          
+          .logout-btn {
+              padding: 10px;
+          }
+      }
+      
+      @media (max-width: 768px) {
+          :root {
+              --header-height: 60px;
+          }
+          
+          .sidebar {
+              left: -280px;
+              box-shadow: none;
+          }
+          
+          .main-content {
+              margin-left: 0;
+              padding: 20px 15px;
+          }
+          
+          .header-brand {
+              width: auto;
+              padding: 0 15px;
+              background: transparent;
+          }
+          
+          .header-brand h3 {
+              color: var(--gray-800);
+              font-size: 18px;
+          }
+          
+          .header {
+              background: white;
+          }
+          
+          body.sidebar-collapsed .sidebar {
+              left: 0;
+              width: 100%;
+              max-width: 280px;
+              box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          }
+          
+          body.sidebar-collapsed .main-content {
+              margin-left: 0;
+          }
+          
+          body.sidebar-collapsed .header-brand {
+              width: auto;
+          }
+          
+          body.sidebar-collapsed .header-brand h3 {
+              display: block;
+          }
+          
+          body.sidebar-collapsed .sidebar-profile {
+              padding: 25px;
+          }
+          
+          body.sidebar-collapsed .sidebar-profile img {
+              width: 80px;
+              height: 80px;
+              margin-bottom: 15px;
+          }
+          
+          body.sidebar-collapsed .sidebar-profile h4,
+          body.sidebar-collapsed .sidebar-profile p,
+          body.sidebar-collapsed .sidebar-menu-title,
+          body.sidebar-collapsed .sidebar-footer {
+              display: block;
+          }
+          
+          body.sidebar-collapsed .sidebar-menu-item {
+              margin: 5px 15px;
+          }
+          
+          body.sidebar-collapsed .sidebar-menu-link {
+              padding: 12px 15px;
+              justify-content: flex-start;
+          }
+          
+          body.sidebar-collapsed .sidebar-menu-link i {
+              margin-right: 10px;
+              font-size: 18px;
+          }
+          
+          body.sidebar-collapsed .sidebar-menu-link span {
+              display: inline;
+          }
+          
+          /* Add overlay when sidebar is open on mobile */
+          .sidebar-overlay {
+              display: none;
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: rgba(0, 0, 0, 0.5);
+              z-index: 98;
+          }
+          
+          body.sidebar-collapsed .sidebar-overlay {
+              display: block;
+          }
+      }
+      
+      @media (max-width: 480px) {
+          .header-brand h3 {
+              font-size: 16px;
+          }
+          
+          .header-user img {
+              width: 35px;
+              height: 35px;
+          }
+          
+          .main-content {
+              padding: 15px 10px;
+          }
+          
+          #sidebar-toggle {
+              width: 35px;
+              height: 35px;
+          }
+      }
   </style>
-
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-
-
 </head>
 
 <body>
-
-  <input type="checkbox" id="check">
-  <!--header area start-->
-  <header style="padding-top: 0px;">
-    <label for="check">
-      <i style=""class="fas fa-bars" id="sidebar_btn"></i>
-    </label>
-    <div class="left_area">
-      <h3>Insurance Management</h3>
-    </div>
-
-  <form action="{% url 'logout' %}" method="POST">
-      {% csrf_token %}
-      <button type="submit" class="logout_btn">Logout</button>
-  </form>
-  
-
+  <header class="header">
+      <div class="header-brand">
+          <h3>Insurance <span>Portal</span></h3>
+      </div>
+      <button id="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+      </button>
+      <div class="header-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search...">
+      </div>
+      <div class="header-right">
+          <div class="header-user">
+              <img src="{% static "image/admin.png" %}" alt="Profile">
+              <div class="header-user-info">
+                  <span class="header-user-name">{{request.user.first_name}}</span>
+                  <span class="header-user-role">Provider</span>
+              </div>
+          </div>
+          <form action="{% url 'logout' %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="logout-btn">
+                  <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+              </button>
+          </form>
+      </div>
   </header>
-  <!--header area end-->
-  <!--sidebar start-->
-  <div class="sidebar" style="
-    margin-top: 50px;
-">
-    <center>
-
-      <img src="{% static "image/admin.png" %}" class="profile_image" alt="">
-      <h4>{{request.user.first_name}}</h4>
-    </center>
-    <a href="{% url 'provider_dashboard' %}"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a>
-    <a href="{% url 'provider:admin-view-customer' %}"><i class="fas fa-list-alt"></i><span>Customers</span></a>
-    <a href="{% url 'provider:admin-category' %}"><i class="fas fa-list-alt"></i><span>Category</span></a>
-    <a href="{% url 'provider:admin-policy' %}"><i class="fab fa-product-hunt"></i><span>Policy</span></a>
-    <a href="{% url 'provider:admin-question' %}"><i class="fas fa-question-circle"></i><span>Questions</span></a>
-
-
-  </div>
-  <!--sidebar end-->
-
-
-  <!--content start-->
-  <div class="content">
-    <br><br><br><br><br>
-    {% block content %}
-
-    {% endblock content %}
-
-
-    <br><br><br>
- 
-  </div>
-  <!--content end-->
+  <div class="sidebar-overlay"></div>
+  <aside class="sidebar">
+      <div class="sidebar-menu">
+          <div class="sidebar-menu-title">Management</div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider_dashboard' %}" class="sidebar-menu-link {% if request.path == '/provider/dashboard/' %}active{% endif %}">
+                  <i class="fas fa-tachometer-alt"></i>
+                  <span>Dashboard</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-view-customer' %}" class="sidebar-menu-link {% if 'admin-view-customer' in request.path %}active{% endif %}">
+                  <i class="fas fa-users"></i>
+                  <span>Customers</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-title">Insurance</div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-category' %}" class="sidebar-menu-link {% if 'admin-category' in request.path %}active{% endif %}">
+                  <i class="fas fa-list-alt"></i>
+                  <span>Categories</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-policy' %}" class="sidebar-menu-link {% if 'admin-policy' in request.path %}active{% endif %}">
+                  <i class="fab fa-product-hunt"></i>
+                  <span>Policies</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-title">Applications</div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-view-policy-holder' %}" class="sidebar-menu-link {% if 'admin-view-policy-holder' in request.path and not 'approved' in request.path and not 'disapproved' in request.path and not 'waiting' in request.path %}active{% endif %}">
+                  <i class="fas fa-user-cog"></i>
+                  <span>All Applications</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-view-approved-policy-holder' %}" class="sidebar-menu-link {% if 'admin-view-approved-policy-holder' in request.path %}active{% endif %}">
+                  <i class="fas fa-user-check"></i>
+                  <span>Approved</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-view-waiting-policy-holder' %}" class="sidebar-menu-link {% if 'admin-view-waiting-policy-holder' in request.path %}active{% endif %}">
+                  <i class="fas fa-user-clock"></i>
+                  <span>Pending</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-view-disapproved-policy-holder' %}" class="sidebar-menu-link {% if 'admin-view-disapproved-policy-holder' in request.path %}active{% endif %}">
+                  <i class="fas fa-user-times"></i>
+                  <span>Rejected</span>
+              </a>
+          </div>
+          <div class="sidebar-menu-title">Support</div>
+          <div class="sidebar-menu-item">
+              <a href="{% url 'provider:admin-question' %}" class="sidebar-menu-link {% if 'admin-question' in request.path %}active{% endif %}">
+                  <i class="fas fa-question-circle"></i>
+                  <span>Customer Questions</span>
+              </a>
+          </div>
+      </div>
+      <div class="sidebar-footer">
+          <p>© 2023 Insurance Provider Portal</p>
+          <p>All rights reserved</p>
+      </div>
+  </aside>
+  <main class="main-content">
+      {% block content %}
+      {% endblock content %}
+  </main>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const sidebarToggle = document.getElementById('sidebar-toggle');
+          const sidebarOverlay = document.querySelector('.sidebar-overlay');
+          
+          sidebarToggle.addEventListener('click', function() {
+              document.body.classList.toggle('sidebar-collapsed');
+          });
+          
+          // Close sidebar when clicking on overlay
+          sidebarOverlay.addEventListener('click', function() {
+              document.body.classList.remove('sidebar-collapsed');
+          });
+          
+          // Check screen size on load
+          checkScreenSize();
+          
+          // Check screen size on resize
+          window.addEventListener('resize', checkScreenSize);
+          
+          function checkScreenSize() {
+              if (window.innerWidth < 768) {
+                  document.body.classList.remove('sidebar-collapsed');
+              } else {
+                  // Optional: Auto-collapse sidebar on desktop if you want
+                  // document.body.classList.add('sidebar-collapsed');
+              }
+          }
+          
+          // Add touch swipe support for mobile
+          let touchStartX = 0;
+          let touchEndX = 0;
+          
+          document.addEventListener('touchstart', function(e) {
+              touchStartX = e.changedTouches[0].screenX;
+          }, false);
+          
+          document.addEventListener('touchend', function(e) {
+              touchEndX = e.changedTouches[0].screenX;
+              handleSwipe();
+          }, false);
+          
+          function handleSwipe() {
+              const swipeThreshold = 100;
+              
+              // Right to left swipe (close sidebar)
+              if (touchStartX - touchEndX > swipeThreshold && document.body.classList.contains('sidebar-collapsed')) {
+                  document.body.classList.remove('sidebar-collapsed');
+              }
+              
+              // Left to right swipe (open sidebar)
+              if (touchEndX - touchStartX > swipeThreshold && !document.body.classList.contains('sidebar-collapsed')) {
+                  document.body.classList.add('sidebar-collapsed');
+              }
+          }
+      });
+  </script>
 </body>
 
 </html>

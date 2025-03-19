@@ -1,0 +1,157 @@
+{% extends 'indexbase.html' %}
+
+{% block content %}
+<section class="contact">
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+            <p>Have questions about our insurance policies? Need a quote? Our team is here to help you.</p>
+            <div class="contact-details">
+                <div>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Dodoma, Tanzania</span>
+                </div>
+                <div>
+                    <i class="fas fa-phone"></i>
+                    <span>+255 (762) 521-584</span>
+                </div>
+                <div>
+                    <i class="fas fa-envelope"></i>
+                    <span>info@insuranceagency.com</span>
+                </div>
+                <div>
+                    <i class="fas fa-clock"></i>
+                    <span>Monday-Friday: 9am-5pm</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form">
+            <h3>Send Us a Message</h3>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert-message {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        <div class="alert-content">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="close-btn" onclick="this.parentElement.style.display='none';">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'customer:contact' %}">
+                {% csrf_token %}
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+                <input type="tel" name="phone" placeholder="Phone Number">
+                <textarea name="message" placeholder="How can we help you?" required></textarea>
+                <button type="submit">Send Message <i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Styled Alert Messages */
+    .alert-message {
+        position: relative;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .alert-content i {
+        font-size: 1.2rem;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+    
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+    
+    .alert-info {
+        background-color: #cce5ff;
+        color: #004085;
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: inherit;
+        opacity: 0.7;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0;
+        transition: opacity 0.2s;
+    }
+    
+    .close-btn:hover {
+        opacity: 1;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    /* Auto-dismiss after 5 seconds */
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    // Auto-dismiss alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert-message');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.animation = 'fadeOut 0.5s forwards';
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 500);
+            }, 5000);
+        });
+    });
+</script>
+{% endblock %}
