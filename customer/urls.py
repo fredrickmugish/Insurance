@@ -15,5 +15,9 @@ path('ask-question', views.ask_question_view,name='ask-question'),
 path('question-history', views.question_history_view,name='question-history'),
 
 path('contact/', views.contact_view, name='contact'),
+path('notifications/', views.notifications_list, name='notifications_list'),
+path('notifications/', views.notifications_list, name='notifications_list'),
+path('notifications/mark-read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+path('notifications/mark-all-read/', views.mark_all_read, name='mark_all_read'),
 
 ]

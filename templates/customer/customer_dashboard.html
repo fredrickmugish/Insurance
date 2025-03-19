@@ -533,6 +533,47 @@
                 height: 35px;
             }
         }
+
+        
+            .notification-bell {
+                position: relative;
+                margin-right: 15px;
+            }
+            
+            .notification-icon {
+                color: var(--gray-700);
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                transition: all 0.2s ease;
+            }
+            
+            .notification-icon:hover {
+                background-color: var(--gray-100);
+                color: var(--primary);
+            }
+            
+            .notification-badge {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background-color: var(--danger);
+                color: white;
+                font-size: 10px;
+                font-weight: 600;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+
     </style>
 </head>
 
@@ -546,9 +587,14 @@
             <i class="fas fa-bars"></i>
         </button>
         
-        <div class="header-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search...">
+     
+        <div class="notification-bell">
+            <a href="{% url 'customer:notifications_list' %}" class="notification-icon">
+                <i class="fas fa-bell"></i>
+                {% if has_unread_notifications %}
+                <span class="notification-badge">{{ unread_notifications_count }}</span>
+                {% endif %}
+            </a>
         </div>
         
         <div class="header-right">

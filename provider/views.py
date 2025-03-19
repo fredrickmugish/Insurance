@@ -58,11 +58,24 @@ def update_customer_view(request, pk):
 @login_required
 def delete_customer_view(request, pk):
     User = get_user_model()
-    user = User.objects.get(
-        customer_policy_records__policy__provider=request.user,
-        id=pk
+    
+    # First, verify the user exists and has policies with this provider
+    try:
+        user = User.objects.get(id=pk)
+    except User.DoesNotExist:
+        return redirect('provider:admin-view-customer')
+    
+    # Get all policy records for this user with the current provider
+    from customer.models import PolicyRecord
+    policy_records = PolicyRecord.objects.filter(
+        customer=user,
+        policy__provider=request.user
     )
-    user.delete()
+    
+    # Delete only those policy records
+    if policy_records.exists():
+        policy_records.delete()
+    
     return redirect('provider:admin-view-customer')
 
 def admin_view_category_view(request):
@@ -179,6 +192,9 @@ def admin_view_waiting_policy_holder_view(request):
     )
     return render(request, 'provider/admin_view_waiting_policy_holder.html', {'policyrecords': policyrecords})
 
+# In provider/views.py
+from customer.utils import create_notification
+
 @login_required
 def approve_request_view(request, pk):
     policyrecord = PolicyRecord.objects.get(
@@ -187,8 +203,17 @@ def approve_request_view(request, pk):
     )
     policyrecord.status = 'APPROVED'
     policyrecord.save()
+    
+    # Create notification for the customer
+    create_notification(
+        recipient=policyrecord.customer,
+        notification_type='policy_approval',
+        title='Policy Approved',
+        message=f'Your application for {policyrecord.policy.policy_name} has been approved.',
+        related_link=f'/customer/policy/{policyrecord.id}/'
+    )
+    
     return redirect('provider:admin-view-policy-holder')
-
 @login_required
 def disapprove_request_view(request, pk):
     policyrecord = PolicyRecord.objects.get(
@@ -197,13 +222,22 @@ def disapprove_request_view(request, pk):
     )
     policyrecord.status = 'DISAPPROVED'
     policyrecord.save()
+    
+    # Create notification for the customer
+    create_notification(
+        recipient=policyrecord.customer,
+        notification_type='policy_rejection',
+        title='Policy Application Rejected',
+        message=f'Your application for {policyrecord.policy.policy_name} has been rejected.',
+        related_link=f'/customer/policy/{policyrecord.id}/'
+    )
+    
     return redirect('provider:admin-view-policy-holder')
 
 @login_required
 def admin_question_view(request):
     questions = Question.objects.filter(customer__customer_policy_records__policy__provider=request.user)
     return render(request,'provider/admin_question.html',{'questions':questions})
-
 def update_question_view(request, pk):
     question = Question.objects.get(id=pk)
     questionForm = QuestionForm(instance=question)
@@ -215,5 +249,16 @@ def update_question_view(request, pk):
             question = questionForm.save(commit=False)
             question.admin_comment = admin_comment
             question.save()
+            
+            # Create notification for the customer
+            create_notification(
+                recipient=question.customer,
+                notification_type='question_answered',
+                title='Your Question Has Been Answered',
+                message='Your question has received a response from our team.',
+                related_link='/customer/questions/'
+            )
+            
             return redirect('provider:admin-question')
+            
     return render(request, 'provider/update_question.html', {'questionForm': questionForm})

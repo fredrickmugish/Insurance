@@ -1,0 +1,157 @@
+<!-- templates/customer/notifications_list.html -->
+{% extends 'customer/customer_dashboard.html' %}
+
+{% block content %}
+<style>
+    .notifications-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+    
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .notification-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+    
+    .mark-all-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .notification-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--gray-100);
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .notification-item:hover {
+        background-color: var(--gray-50);
+    }
+    
+    .notification-item.unread {
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+    
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .notification-content {
+        flex-grow: 1;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: var(--gray-800);
+        font-size: 16px;
+    }
+    
+    .notification-message {
+        color: var(--gray-600);
+        margin-bottom: 5px;
+    }
+    
+    .notification-time {
+        font-size: 12px;
+        color: var(--gray-500);
+    }
+    
+    .notification-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .notification-btn {
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .view-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+</style>
+
+<div class="notifications-container">
+    <div class="notification-header">
+        <h2 class="notification-title">Notifications</h2>
+        {% if unread_count > 0 %}
+        <a href="{% url 'customer:mark_all_read' %}" class="mark-all-btn">Mark All as Read</a>
+        {% endif %}
+    </div>
+    
+    {% if notifications %}
+        {% for notification in notifications %}
+        <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+            <div class="notification-icon">
+                {% if notification.notification_type == 'policy_approval' %}
+                    <i class="fas fa-check"></i>
+                {% elif notification.notification_type == 'policy_rejection' %}
+                    <i class="fas fa-times"></i>
+                {% elif notification.notification_type == 'payment_due' %}
+                    <i class="fas fa-money-bill"></i>
+                {% elif notification.notification_type == 'payment_received' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif notification.notification_type == 'question_answered' %}
+                    <i class="fas fa-comment"></i>
+                {% endif %}
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">{{ notification.title }}</div>
+                <div class="notification-message">{{ notification.message }}</div>
+                <div class="notification-time">{{ notification.created_at|timesince }} ago</div>
+                
+                <div class="notification-actions">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-bell" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i>
+            <h3>No notifications</h3>
+            <p>You don't have any notifications at the moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

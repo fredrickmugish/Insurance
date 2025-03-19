@@ -35,3 +35,29 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = (
+        ('policy_approval', 'Policy Approval'),
+        ('policy_rejection', 'Policy Rejection'),
+        ('payment_due', 'Payment Due'),
+        ('payment_received', 'Payment Received'),
+        ('question_answered', 'Question Answered'),
+    )
+    
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=100)
+    message = models.TextField()
+    related_link = models.CharField(max_length=200, blank=True, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.notification_type} for {self.recipient.username}"
