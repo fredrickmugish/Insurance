@@ -90,12 +90,13 @@ WSGI_APPLICATION = "insurance_platform.wsgi.application"
 # if 'DATABASE_URL' in os.environ:
     # Production database (PostgreSQL on Render)
 DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('postgresql://insurance_3rmd_user:KkBn69VMaeua6p2XhOYmHXba8YUjJEkF@dpg-cvdcpajv2p9s73cdv13g-a.oregon-postgres.render.com/insurance_3rmd'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    'default': dj_database_url.config(
+        default='postgresql://insurance_3rmd_user:KkBn69VMaeua6p2XhOYmHXba8YUjJEkF@dpg-cvdcpajv2p9s73cdv13g-a.oregon-postgres.render.com/insurance_3rmd',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
 # else:
     # Development database (SQLite)
     # DATABASES = {
