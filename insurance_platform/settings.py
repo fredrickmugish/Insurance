@@ -87,23 +87,26 @@ WSGI_APPLICATION = "insurance_platform.wsgi.application"
 
 
 # Database configuration
-if 'DATABASE_URL' in os.environ:
+# if 'DATABASE_URL' in os.environ:
     # Production database (PostgreSQL on Render)
-    DATABASES = {
+DATABASES = {
         'default': dj_database_url.config(
             default=os.environ.get('postgresql://insurance_3rmd_user:KkBn69VMaeua6p2XhOYmHXba8YUjJEkF@dpg-cvdcpajv2p9s73cdv13g-a.oregon-postgres.render.com/insurance_3rmd'),
             conn_max_age=600,
             conn_health_checks=True,
         )
     }
-else:
+# else:
     # Development database (SQLite)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': BASE_DIR / 'db.sqlite3',
+    #         'OPTIONS': {
+    #             'timeout': 30, 
+    #         }
+    #     }
+    # }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -146,6 +149,7 @@ STATICFILES_DIRS=[
 STATIC_DIR,
  ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
