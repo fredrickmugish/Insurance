@@ -42,5 +42,8 @@ path('update-question/<int:pk>', views.update_question_view,name='update-questio
 path('payments/', views.admin_payment_list, name='admin-payment-list'),
 path('payment/<int:payment_id>/', views.admin_payment_detail, name='admin-payment-detail'),
 
+path('profile/', views.provider_profile_view, name='profile'),
+path('change-password/', views.change_password_view, name='change_password'),
+
 ]
 

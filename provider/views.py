@@ -7,24 +7,30 @@ from django.contrib.auth.forms import UserChangeForm
 from customer.models import PolicyRecord  
 from customer.forms import QuestionForm
 from customer.models import Payment
+from .models import Category, Policy
+from customer.models import UserProfile
+from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from customer.models import UserProfile
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def provider_dashboard_view(request):
     dict={
-        'total_user': models.PolicyRecord.objects.filter(policy__provider=request.user).values('user').distinct().count(),
-        'total_policy': models.Policy.objects.filter(provider=request.user).count(),
-        'total_category': models.Category.objects.filter(policy__provider=request.user).distinct().count(),
+        'total_user': PolicyRecord.objects.filter(policy__provider=request.user).values('customer').distinct().count(),
+        'total_policy': Policy.objects.filter(provider=request.user).count(),
+        'total_category': Category.objects.filter(policy__provider=request.user).distinct().count(),
         'total_question': Question.objects.filter(customer__customer_policy_records__policy__provider=request.user).count(),
-        'total_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user).count(),
-        'approved_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Approved').count(),
-        'disapproved_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Disapproved').count(),
-        'waiting_policy_holder': models.PolicyRecord.objects.filter(policy__provider=request.user, status='Pending').count(),
+        'total_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user).count(),
+        'approved_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='Approved').count(),
+        'disapproved_policy_holder':PolicyRecord.objects.filter(policy__provider=request.user, status='Disapproved').count(),
+        'waiting_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='Pending').count(),
         'total_payments': Payment.objects.filter(policy_record__policy__provider=request.user).count(),
         'pending_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='PENDING').count(),
         'confirmed_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='CONFIRMED').count(),
     }
+    
     return render(request,'provider/dashboard.html', dict)
-
 
 def admin_category_view(request):
     return render(request,'provider/admin_category.html')
@@ -325,3 +331,60 @@ def admin_payment_detail(request, payment_id):
     
 
     return render(request, 'provider/admin_payment_detail.html', {'payment': payment})
+
+@login_required
+def provider_profile_view(request):
+    # Get or create user profile
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        # Create profile if it doesn't exist
+        profile = UserProfile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        # Get form data
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        
+        # Handle profile image upload
+        if 'profile_image' in request.FILES:
+            profile_image = request.FILES['profile_image']
+            profile.profile_image = profile_image
+            profile.save()
+        
+        # Update user information
+        user = request.user
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        messages.success(request, 'Your profile has been updated successfully!')
+        return redirect('provider:profile')
+    
+    context = {
+        'profile': profile
+    }
+    return render(request, 'provider/profile.html', context)
+
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Important: update the session to prevent the user from being logged out
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('provider:change_password')
+        else:
+            for error in form.errors.values():
+                messages.error(request, error[0])
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'provider/change_password.html', {
+        'form': form
+    })

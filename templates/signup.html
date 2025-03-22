@@ -9,43 +9,43 @@
                 <h2>Create Account</h2>
                 <p>Join our insurance platform to explore policies</p>
             </div>
-            
             <form method="POST" class="auth-form">
                 {% csrf_token %}
-                
                 <div class="form-group">
-                    <label for="username"><i class="fas fa-user"></i></label>
+                    <label for="first_name"><i class="fas fa-user"></i></label>
+                    <input type="text" id="first_name" name="first_name" placeholder="First Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name"><i class="fas fa-user"></i></label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Last Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user-circle"></i></label>
                     <input type="text" id="username" name="username" placeholder="Username" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="email"><i class="fas fa-envelope"></i></label>
                     <input type="email" id="email" name="email" placeholder="Email Address" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="password"><i class="fas fa-lock"></i></label>
                     <input type="password" id="password" name="password" placeholder="Password" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="confirm-password"><i class="fas fa-check-circle"></i></label>
                     <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
                 </div>
-                
                 <div class="form-options">
                     <div class="terms-agreement">
                         <input type="checkbox" id="terms" name="terms" required>
                         <label for="terms">I agree to the <a href="#">Terms & Conditions</a></label>
                     </div>
                 </div>
-                
                 <button type="submit" class="auth-button">
                     <span>Sign Up</span>
                     <i class="fas fa-user-plus"></i>
                 </button>
             </form>
-            
             <div class="auth-footer">
                 <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
             </div>
@@ -54,152 +54,129 @@
 </section>
 
 <style>
-    .auth-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "images/insurance-signup-bg.jpg" %}');
-        background-size: cover;
-        background-position: center;
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 1rem;
-    }
-    
-    .auth-container {
-        width: 100%;
-        max-width: 500px;
-    }
-    
-    .auth-card {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-    }
-    
+.auth-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static "images/insurance-signup-bg.jpg" %}');
+    background-size: cover;
+    background-position: center;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+}
+.auth-container {
+    width: 100%;
+    max-width: 500px;
+}
+.auth-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+.auth-header {
+    background: linear-gradient(135deg, #1a73e8, #0d47a1);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+.auth-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.auth-header p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+.auth-form {
+    padding: 2rem;
+}
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+.form-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1a73e8;
+}
+.form-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+.form-group input:focus {
+    border-color: #1a73e8;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+.form-options {
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+.terms-agreement {
+    display: flex;
+    align-items: flex-start;
+}
+.terms-agreement input {
+    margin-right: 0.5rem;
+    margin-top: 0.3rem;
+}
+.terms-agreement a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+.terms-agreement a:hover {
+    text-decoration: underline;
+}
+.auth-button {
+    width: 100%;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s;
+}
+.auth-button:hover {
+    background-color: #0d47a1;
+}
+.auth-footer {
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+    color: #666;
+}
+.auth-footer a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+}
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+@media (max-width: 480px) {
     .auth-header {
-        background: linear-gradient(135deg, #1a73e8, #0d47a1);
-        color: white;
-        padding: 2rem;
-        text-align: center;
-    }
-    
-    .auth-header h2 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .auth-header p {
-        opacity: 0.9;
-        font-size: 1rem;
-    }
-    
-    .auth-form {
-        padding: 2rem;
-    }
-    
-    .form-group {
-        position: relative;
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-group label {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #1a73e8;
-    }
-    
-    .form-group input {
-        width: 100%;
-        padding: 1rem 1rem 1rem 2.5rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-    }
-    
-    .form-group input:focus {
-        border-color: #1a73e8;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-    }
-    
-    .form-options {
-        margin-bottom: 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    .terms-agreement {
-        display: flex;
-        align-items: flex-start;
-    }
-    
-    .terms-agreement input {
-        margin-right: 0.5rem;
-        margin-top: 0.3rem;
-    }
-    
-    .terms-agreement a {
-        color: #1a73e8;
-        text-decoration: none;
-    }
-    
-    .terms-agreement a:hover {
-        text-decoration: underline;
-    }
-    
-    .auth-button {
-        width: 100%;
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        padding: 1rem;
-        border-radius: 5px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        transition: background-color 0.3s;
-    }
-    
-    .auth-button:hover {
-        background-color: #0d47a1;
-    }
-    
-    .auth-footer {
-        text-align: center;
         padding: 1.5rem;
-        border-top: 1px solid #eee;
-        color: #666;
     }
-    
-    .auth-footer a {
-        color: #1a73e8;
-        text-decoration: none;
-        font-weight: 500;
+    .auth-header h2 {
+        font-size: 1.8rem;
     }
-    
-    .auth-footer a:hover {
-        text-decoration: underline;
+    .auth-form {
+        padding: 1.5rem;
     }
-    
-    @media (max-width: 480px) {
-        .auth-header {
-            padding: 1.5rem;
-        }
-        
-        .auth-header h2 {
-            font-size: 1.8rem;
-        }
-        
-        .auth-form {
-            padding: 1.5rem;
-        }
-    }
+}
 </style>
 {% endblock %}

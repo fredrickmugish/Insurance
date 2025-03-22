@@ -533,6 +533,75 @@
               height: 35px;
           }
       }
+
+      /* Add this to your existing CSS */
+      .dropdown {
+          position: relative;
+          cursor: pointer;
+      }
+      
+      .dropdown-toggle {
+          display: flex;
+          align-items: center;
+      }
+      
+      .dropdown-icon {
+          margin-left: 5px;
+          font-size: 12px;
+          color: var(--gray-500);
+          transition: transform 0.2s;
+      }
+      
+      .dropdown:hover .dropdown-icon {
+          transform: rotate(180deg);
+      }
+      
+      .dropdown-menu {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          width: 200px;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-10px);
+          transition: all 0.3s ease;
+          z-index: 100;
+      }
+      
+      .dropdown:hover .dropdown-menu {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+      }
+      
+      .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 15px;
+          color: var(--gray-700);
+          text-decoration: none;
+          transition: background-color 0.2s;
+      }
+      
+      .dropdown-item:hover {
+          background-color: var(--gray-100);
+      }
+      
+      .dropdown-item i {
+          color: var(--primary);
+          width: 16px;
+      }
+      
+      .dropdown-divider {
+          height: 1px;
+          background-color: var(--gray-200);
+          margin: 5px 0;
+      }
+      
   </style>
 </head>
 
@@ -546,12 +615,33 @@
       </button>
      
       <div class="header-right">
-          <div class="header-user">
-              <img src="{% static "image/admin.png" %}" alt="Profile">
-              <div class="header-user-info">
-                  <span class="header-user-name">{{request.user.first_name}}</span>
-                  <span class="header-user-role">Provider</span>
-              </div>
+        <div class="header-user dropdown">
+            <div class="dropdown-toggle">
+                {% if request.user.profile.profile_image %}
+                    <img src="{{ request.user.profile.profile_image.url }}" alt="Profile">
+                {% else %}
+                    <img src="{% static 'image/admin.png' %}" alt="Profile">
+                {% endif %}
+                <div class="header-user-info">
+                    <span class="header-user-name">{{request.user.username}}</span>
+                    <span class="header-user-role">Provider</span>
+                </div>
+                <i class="fas fa-chevron-down dropdown-icon"></i>
+            </div>
+            <div class="dropdown-menu">
+                <a href="{% url 'provider:profile' %}" class="dropdown-item">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </a>
+                <a href="{% url 'provider:change_password' %}" class="dropdown-item">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="{% url 'logout' %}" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
           </div>
           <form action="{% url 'logout' %}" method="POST">
               {% csrf_token %}
@@ -566,7 +656,7 @@
       <div class="sidebar-menu">
           <div class="sidebar-menu-title">Management</div>
           <div class="sidebar-menu-item">
-              <a href="{% url 'provider_dashboard' %}" class="sidebar-menu-link {% if request.path == '/provider/dashboard/' %}active{% endif %}">
+              <a href="{% url 'provider:provider-dashboard' %}" class="sidebar-menu-link {% if request.path == '/provider/dashboard/' %}active{% endif %}">
                   <i class="fas fa-tachometer-alt"></i>
                   <span>Dashboard</span>
               </a>

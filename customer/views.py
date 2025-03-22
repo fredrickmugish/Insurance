@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from provider.models import Policy
-from customer.models import Payment
+from provider.models import Policy, Category
+from customer.models import Payment, UserProfile
 from .models import PolicyRecord, Question
 from . import forms, models
 from customer.forms import PaymentForm
@@ -9,17 +9,25 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 from customer.utils import create_notification
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+import re
 
 @login_required
 def customer_dashboard_view(request):
-    dict={
-        'customer':models.Customer.objects.get(user_id=request.user.id),
-        'available_policy':Policy.objects.all().count(),
-        'applied_policy':PolicyRecord.objects.all().filter(customer=models.Customer.objects.get(user_id=request.user.id)).count(),
-        'total_category':models.Category.objects.all().count(),
-        'total_question':Question.objects.all().filter(customer=models.Customer.objects.get(user_id=request.user.id)).count(),
+    # Get the current user
+    user = request.user
+    
+    dict = {
+        'customer': user,  # Use the user directly instead of Customer model
+        'available_policy': Policy.objects.all().count(),
+        'applied_policy': PolicyRecord.objects.filter(customer=user).count(),
+        'total_category': Category.objects.all().count(),
+        'total_question': Question.objects.filter(customer=user).count(),
     }
-    return render(request,'customer/dashboard.html',context=dict)
+    
+    return render(request, 'customer/dashboard.html', context=dict)
 
 @login_required
 def apply_policy_view(request):
@@ -44,9 +52,8 @@ def apply_view(request, pk):
 
 @login_required
 def history_view(request):
-    policies = PolicyRecord.objects.filter(customer=request.user)
+    policies = PolicyRecord.objects.filter(customer=request.user).select_related('policy').prefetch_related('payments')
     return render(request, 'customer/history.html', {'policies': policies})
-
 
 @login_required
 def ask_question_view(request):
@@ -136,34 +143,111 @@ def payment_list(request):
     return render(request, 'customer/payment_list.html', {'payments': payments})
 
 @login_required
-def make_payment(request, policy_id):
-    """View to make a payment for a policy"""
-    policy_record = get_object_or_404(PolicyRecord, id=policy_id, customer=request.user)
+def make_payment_view(request, policy_record_id):
+    policy_record = get_object_or_404(PolicyRecord, id=policy_record_id, customer=request.user)
     
     if request.method == 'POST':
         form = PaymentForm(request.POST, request.FILES)
         if form.is_valid():
             payment = form.save(commit=False)
             payment.policy_record = policy_record
-            payment.status = 'PENDING'
+            payment.customer = request.user
+            payment.status = 'PENDING'  # Set initial status to pending
             payment.save()
             
-            # Create notification for the provider
-            create_notification(
-                recipient=policy_record.policy.provider,
-                notification_type='payment_due',
-                title='New Payment Submission',
-                message=f'A payment of ${payment.amount} has been submitted for {policy_record.policy.policy_name} by {request.user.get_full_name()}.',
-                related_link=f'/provider/payments/{payment.id}/'
-            )
-            
-            messages.success(request, 'Payment submitted successfully. It will be reviewed by the provider.')
-            return redirect('customer:payment_list')
+            messages.success(request, 'Your payment has been submitted and is pending confirmation.')
+            return redirect('customer:history')
     else:
-        # Pre-fill with the policy premium amount
-        form = PaymentForm(initial={'amount': policy_record.policy.premium})
+        form = PaymentForm()
     
     return render(request, 'customer/make_payment.html', {
         'form': form,
         'policy_record': policy_record
     })
+
+@login_required
+def profile_view(request):
+    # Get the user's profile
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        # Create profile if it doesn't exist
+        profile = UserProfile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        # Get form data
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        
+        # Handle profile image upload
+        if 'profile_image' in request.FILES:
+            profile_image = request.FILES['profile_image']
+            profile.profile_image = profile_image
+            profile.save()
+        
+        # Update user information
+        user = request.user
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        
+        messages.success(request, 'Your profile has been updated successfully!')
+        return redirect('customer:profile')
+    
+    context = {
+        'profile': profile  # Pass the profile to the template
+    }
+    return render(request, 'customer/profile.html', context)
+
+@login_required
+def change_password_view(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Check if current password is correct
+        if not request.user.check_password(current_password):
+            messages.error(request, 'Your current password is incorrect.')
+            return redirect('customer:change_password')
+        
+        # Check if new passwords match
+        if new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+            return redirect('customer:change_password')
+        
+        # Validate password strength
+        if len(new_password) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return redirect('customer:change_password')
+        
+        if not re.search(r'[A-Z]', new_password):
+            messages.error(request, 'Password must contain at least one uppercase letter.')
+            return redirect('customer:change_password')
+            
+        if not re.search(r'[a-z]', new_password):
+            messages.error(request, 'Password must contain at least one lowercase letter.')
+            return redirect('customer:change_password')
+            
+        if not re.search(r'[0-9]', new_password):
+            messages.error(request, 'Password must contain at least one number.')
+            return redirect('customer:change_password')
+            
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', new_password):
+            messages.error(request, 'Password must contain at least one special character.')
+            return redirect('customer:change_password')
+        
+        # Change password
+        user = request.user
+        user.set_password(new_password)
+        user.save()
+        
+        # Update session to prevent logout
+        update_session_auth_hash(request, user)
+        
+        messages.success(request, 'Your password has been changed successfully!')
+        return redirect('customer:customer-dashboard')
+    
+    return render(request, 'customer/change_password.html')

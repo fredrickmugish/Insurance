@@ -21,5 +21,9 @@ path('notifications/mark-read/<int:notification_id>/', views.mark_notification_r
 path('notifications/mark-all-read/', views.mark_all_read, name='mark_all_read'),
 
 path('payments/', views.payment_list, name='payment_list'),
-path('make-payment/<int:policy_id>/', views.make_payment, name='make_payment'),
+path('make-payment/<int:policy_record_id>/', views.make_payment_view, name='make_payment'),
+
+path('profile/', views.profile_view, name='profile'),
+path('change-password/', views.change_password_view, name='change_password'),
+
 ]

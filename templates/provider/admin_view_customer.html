@@ -2,23 +2,23 @@
 
 {% block content %}
 <style>
-  /* Modern Table Styles */
-  .customer-header {
+/* Modern Table Styles */
+.customer-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
-  }
-  
-  .customer-title {
+}
+
+.customer-title {
     font-size: 24px;
     font-weight: 600;
     color: var(--gray-900);
     position: relative;
     padding-left: 15px;
-  }
-  
-  .customer-title::before {
+}
+
+.customer-title::before {
     content: '';
     position: absolute;
     left: 0;
@@ -28,9 +28,9 @@
     height: 24px;
     background: var(--primary);
     border-radius: 2px;
-  }
-  
-  .add-customer-btn {
+}
+
+.add-customer-btn {
     background-color: var(--primary);
     color: white;
     border: none;
@@ -43,40 +43,42 @@
     gap: 8px;
     transition: all 0.2s ease;
     cursor: pointer;
-  }
-  
-  .add-customer-btn:hover {
+}
+
+.add-customer-btn:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-  }
-  
-  .customers-table-container {
+}
+
+.customers-table-container {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+    overflow: auto; /* Changed from hidden to auto to enable scrolling */
+    max-height: 500px; /* Set a maximum height for vertical scrolling */
     animation: fadeIn 0.5s ease forwards;
-  }
-  
-  @keyframes fadeIn {
+}
+
+@keyframes fadeIn {
     from {
-      opacity: 0;
-      transform: translateY(10px);
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  .customers-table {
+}
+
+.customers-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-  }
-  
-  .customers-table th {
+    min-width: 700px; /* Ensures the table doesn't get too compressed */
+}
+
+.customers-table th {
     background-color: var(--gray-50);
     color: var(--gray-700);
     font-weight: 600;
@@ -84,34 +86,37 @@
     padding: 16px 20px;
     font-size: 14px;
     border-bottom: 1px solid var(--gray-200);
-  }
-  
-  .customers-table td {
+    position: sticky; /* Makes headers stick to the top when scrolling */
+    top: 0; /* Position at the top */
+    z-index: 10; /* Ensures headers appear above table content */
+}
+
+.customers-table td {
     padding: 16px 20px;
     font-size: 14px;
     color: var(--gray-700);
     border-bottom: 1px solid var(--gray-100);
     vertical-align: middle;
-  }
-  
-  .customers-table tr:last-child td {
+}
+
+.customers-table tr:last-child td {
     border-bottom: none;
-  }
-  
-  .customers-table tr:hover td {
+}
+
+.customers-table tr:hover td {
     background-color: var(--gray-50);
-  }
-  
-  .customer-email {
+}
+
+.customer-email {
     color: var(--gray-500);
-  }
-  
-  .action-buttons {
+}
+
+.action-buttons {
     display: flex;
     gap: 8px;
-  }
-  
-  .btn-edit, .btn-delete {
+}
+
+.btn-edit, .btn-delete {
     width: 36px;
     height: 36px;
     border-radius: 8px;
@@ -121,115 +126,135 @@
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
-  
-  .btn-edit {
+}
+
+.btn-edit {
     background-color: rgba(79, 70, 229, 0.1);
     color: var(--primary);
-  }
-  
-  .btn-edit:hover {
+}
+
+.btn-edit:hover {
     background-color: var(--primary);
     color: white;
-  }
-  
-  .btn-delete {
+}
+
+.btn-delete {
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--danger);
-  }
-  
-  .btn-delete:hover {
+}
+
+.btn-delete:hover {
     background-color: var(--danger);
     color: white;
-  }
-  
-  .empty-state {
+}
+
+.empty-state {
     padding: 40px;
     text-align: center;
     color: var(--gray-500);
-  }
-  
-  .empty-state i {
+}
+
+.empty-state i {
     font-size: 48px;
     margin-bottom: 15px;
     opacity: 0.5;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 992px) {
+}
+
+/* Custom scrollbar for better appearance */
+.customers-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.customers-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.customers-table-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.customers-table-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
     .customers-table th:nth-child(4),
     .customers-table td:nth-child(4) {
-      display: none;
+        display: none;
     }
-  }
-  
-  @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
     .customer-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
     
-    .customers-table th:nth-child(3),
-    .customers-table td:nth-child(3) {
-      display: none;
+    .customers-table-container {
+        margin: 0 -15px;
+        border-radius: 0;
     }
-  }
-  
-  @media (max-width: 576px) {
+}
+
+@media (max-width: 576px) {
     .customers-table th:nth-child(1),
     .customers-table td:nth-child(1) {
-      display: none;
+        display: none;
     }
-  }
+}
 </style>
 
 <div class="customer-header">
-  <h2 class="customer-title">Customer Management</h2>
-  <button class="add-customer-btn">
-    <i class="fas fa-plus"></i> Add Customer
-  </button>
+    <h2 class="customer-title">Customer Management</h2>
+    <button class="add-customer-btn">
+        <i class="fas fa-plus"></i> Add Customer
+    </button>
 </div>
 
 <div class="customers-table-container">
-  {% if customers %}
-  <table class="customers-table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in customers %}
-      <tr>
-        <td>{{ user.username }}</td>
-        <td>{{ user.first_name }}</td>
-        <td>{{ user.last_name }}</td>
-        <td class="customer-email">{{ user.email }}</td>
-        <td>
-          <div class="action-buttons">
-            <a href="{% url 'provider:update-customer' user.id %}" class="btn-edit" title="Edit customer">
-              <i class="fas fa-edit"></i>
-            </a>
-            <a href="{% url 'provider:delete-customer' user.id %}" class="btn-delete" title="Delete customer">
-              <i class="fas fa-trash-alt"></i>
-            </a>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <div class="empty-state">
-    <i class="fas fa-users"></i>
-    <h3>No customers found</h3>
-    <p>There are no customers in the system yet.</p>
-  </div>
-  {% endif %}
+    {% if customers %}
+    <table class="customers-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in customers %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td class="customer-email">{{ user.email }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'provider:update-customer' user.id %}" class="btn-edit" title="Edit customer">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'provider:delete-customer' user.id %}" class="btn-delete" title="Delete customer">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>No customers found</h3>
+        <p>There are no customers in the system yet.</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}
