@@ -22,14 +22,13 @@ def provider_dashboard_view(request):
         'total_category': Category.objects.filter(policy__provider=request.user).distinct().count(),
         'total_question': Question.objects.filter(customer__customer_policy_records__policy__provider=request.user).count(),
         'total_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user).count(),
-        'approved_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='Approved').count(),
-        'disapproved_policy_holder':PolicyRecord.objects.filter(policy__provider=request.user, status='Disapproved').count(),
-        'waiting_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='Pending').count(),
+        'approved_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='APPROVED').count(),
+        'disapproved_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='DISAPPROVED').count(),
+        'waiting_policy_holder': PolicyRecord.objects.filter(policy__provider=request.user, status='PENDING').count(),
         'total_payments': Payment.objects.filter(policy_record__policy__provider=request.user).count(),
         'pending_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='PENDING').count(),
         'confirmed_payments': Payment.objects.filter(policy_record__policy__provider=request.user, status='CONFIRMED').count(),
     }
-    
     return render(request,'provider/dashboard.html', dict)
 
 def admin_category_view(request):

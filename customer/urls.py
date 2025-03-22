@@ -25,5 +25,6 @@ path('make-payment/<int:policy_record_id>/', views.make_payment_view, name='make
 
 path('profile/', views.profile_view, name='profile'),
 path('change-password/', views.change_password_view, name='change_password'),
+path('policy-categories/', views.policy_categories_view, name='policy-categories'),
 
 ]

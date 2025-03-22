@@ -251,3 +251,12 @@ def change_password_view(request):
         return redirect('customer:customer-dashboard')
     
     return render(request, 'customer/change_password.html')
+
+def policy_categories_view(request):
+    categories = Category.objects.all().order_by('category_name')
+    
+    context = {
+        'categories': categories,
+    }
+    
+    return render(request, 'customer/policy_categories.html', context)
