@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insurance Platform</title>
+    <title>Insurance portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* General Reset */
@@ -13,7 +13,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         /* Body & Font Style */
         body {
             font-family: 'Poppins', sans-serif;
@@ -21,7 +21,7 @@
             color: #333;
             line-height: 1.6;
         }
-
+        
         /* Header */
         header {
             background: linear-gradient(135deg, #1a73e8, #0d47a1);
@@ -35,24 +35,24 @@
             top: 0;
             z-index: 1000;
         }
-
+        
         header .logo {
             display: flex;
             align-items: center;
         }
-
+        
         header .logo h1 {
             font-size: 1.8rem;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-
+        
         header nav ul {
             list-style: none;
             display: flex;
             gap: 2rem;
         }
-
+        
         header nav ul li a {
             color: white;
             text-decoration: none;
@@ -62,11 +62,17 @@
             border-radius: 4px;
             transition: all 0.3s ease;
         }
-
+        
         header nav ul li a:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
-
+        
+        /* Logo and Menu Container */
+        .logo-menu-container {
+            display: flex;
+            align-items: center;
+        }
+        
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{% static "images/insurance-hero.jpg" %}');
@@ -77,25 +83,25 @@
             padding: 8rem 2rem;
             position: relative;
         }
-
+        
         .hero-content {
             max-width: 800px;
             margin: 0 auto;
         }
-
+        
         .hero-content h1 {
             font-size: 3rem;
             margin-bottom: 1.5rem;
             font-weight: 700;
             line-height: 1.2;
         }
-
+        
         .hero-content p {
             font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.9;
         }
-
+        
         .cta-button {
             background-color: #1a73e8;
             color: white;
@@ -108,20 +114,20 @@
             display: inline-block;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
+        
         .cta-button:hover {
             background-color: #0d47a1;
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
-
+        
         /* Services Section */
         .services {
             background-color: #fff;
             padding: 5rem 2rem;
             text-align: center;
         }
-
+        
         .services h2 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
@@ -129,7 +135,7 @@
             position: relative;
             display: inline-block;
         }
-
+        
         .services h2:after {
             content: '';
             position: absolute;
@@ -140,7 +146,7 @@
             left: 50%;
             transform: translateX(-50%);
         }
-
+        
         .services p.subtitle {
             color: #666;
             margin-bottom: 3rem;
@@ -148,7 +154,7 @@
             margin-left: auto;
             margin-right: auto;
         }
-
+        
         .service-container {
             display: flex;
             flex-wrap: wrap;
@@ -157,7 +163,7 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-
+        
         .service-card {
             flex: 1 1 300px;
             background-color: white;
@@ -169,7 +175,7 @@
             max-width: 350px;
             border-top: 4px solid #1a73e8;
         }
-
+        
         .service-card .icon {
             background-color: #e8f0fe;
             width: 70px;
@@ -180,24 +186,24 @@
             justify-content: center;
             margin-bottom: 1.5rem;
         }
-
+        
         .service-card .icon i {
             color: #1a73e8;
             font-size: 1.8rem;
         }
-
+        
         .service-card h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: #333;
         }
-
+        
         .service-card p {
             font-size: 1rem;
             color: #666;
             margin-bottom: 1.5rem;
         }
-
+        
         .service-card a {
             color: #1a73e8;
             text-decoration: none;
@@ -205,28 +211,40 @@
             display: inline-flex;
             align-items: center;
         }
-
+        
         .service-card a i {
             margin-left: 5px;
             transition: transform 0.3s ease;
         }
-
+        
         .service-card a:hover i {
             transform: translateX(5px);
         }
-
+        
         .service-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
-
+        
+        .service-card img {
+            max-width: 80px;
+            height: auto;
+            margin: 0 auto 1rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .service-card:hover img {
+            transform: scale(1.1);
+        }
+        
         /* Contact Section */
         .contact {
             padding: 5rem 2rem;
             background-color: #f8f9fa;
             position: relative;
         }
-
+        
         .contact-container {
             display: flex;
             flex-wrap: wrap;
@@ -234,39 +252,39 @@
             margin: 0 auto;
             gap: 3rem;
         }
-
+        
         .contact-info {
             flex: 1 1 300px;
         }
-
+        
         .contact-info h2 {
             font-size: 2.5rem;
             margin-bottom: 1.5rem;
             color: #333;
         }
-
+        
         .contact-info p {
             color: #666;
             margin-bottom: 2rem;
         }
-
+        
         .contact-info .contact-details {
             margin-top: 2rem;
         }
-
+        
         .contact-info .contact-details div {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
         }
-
+        
         .contact-info .contact-details i {
             color: #1a73e8;
             font-size: 1.2rem;
             margin-right: 1rem;
             width: 20px;
         }
-
+        
         .contact-form {
             flex: 1 1 500px;
             background-color: white;
@@ -274,19 +292,19 @@
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
-
+        
         .contact-form h3 {
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
             color: #333;
         }
-
+        
         .contact-form form {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
-
+        
         .contact-form input,
         .contact-form textarea {
             padding: 1rem;
@@ -296,18 +314,18 @@
             font-size: 1rem;
             transition: border-color 0.3s ease;
         }
-
+        
         .contact-form input:focus,
         .contact-form textarea:focus {
             border-color: #1a73e8;
             outline: none;
         }
-
+        
         .contact-form textarea {
             min-height: 150px;
             resize: vertical;
         }
-
+        
         .contact-form button {
             background-color: #1a73e8;
             color: white;
@@ -319,18 +337,18 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
+        
         .contact-form button:hover {
             background-color: #0d47a1;
         }
-
+        
         /* Footer */
         footer {
             background-color: #1a2a3a;
             color: #fff;
             padding: 3rem 2rem 1.5rem;
         }
-
+        
         .footer-container {
             display: flex;
             flex-wrap: wrap;
@@ -339,18 +357,18 @@
             margin: 0 auto;
             gap: 2rem;
         }
-
+        
         .footer-col {
             flex: 1 1 200px;
         }
-
+        
         .footer-col h4 {
             font-size: 1.2rem;
             margin-bottom: 1.5rem;
             position: relative;
             padding-bottom: 0.5rem;
         }
-
+        
         .footer-col h4:after {
             content: '';
             position: absolute;
@@ -360,32 +378,32 @@
             height: 2px;
             background-color: #1a73e8;
         }
-
+        
         .footer-col ul {
             list-style: none;
         }
-
+        
         .footer-col ul li {
             margin-bottom: 0.8rem;
         }
-
+        
         .footer-col ul li a {
             color: #ddd;
             text-decoration: none;
             transition: color 0.3s ease;
         }
-
+        
         .footer-col ul li a:hover {
             color: #1a73e8;
             padding-left: 5px;
         }
-
+        
         .footer-col .social-links {
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
         }
-
+        
         .footer-col .social-links a {
             display: flex;
             align-items: center;
@@ -397,12 +415,12 @@
             color: #fff;
             transition: all 0.3s ease;
         }
-
+        
         .footer-col .social-links a:hover {
             background-color: #1a73e8;
             transform: translateY(-3px);
         }
-
+        
         .copyright {
             text-align: center;
             padding-top: 2rem;
@@ -411,22 +429,85 @@
             color: #aaa;
             font-size: 0.9rem;
         }
-
+        
+        /* Mobile Menu Styles */
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-left: 15px;
+        }
+        
+        .menu-toggle .bar {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             header {
-                flex-direction: column;
-                padding: 1rem;
+                padding: 1rem 5%;
             }
             
-            header .logo {
-                margin-bottom: 1rem;
+            .logo-menu-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .menu-toggle {
+                display: block;
+                z-index: 1001;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background: #1a2a3a;
+                padding: 80px 20px 20px;
+                transition: right 0.3s ease;
+                z-index: 1000;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            }
+            
+            .nav-menu.active {
+                right: 0;
             }
             
             header nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            header nav ul li {
+                width: 100%;
+            }
+            
+            header nav ul li a {
+                display: block;
+                padding: 10px;
+                width: 100%;
+            }
+            
+            /* Hamburger menu animation */
+            .menu-toggle.active .bar:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+            
+            .menu-toggle.active .bar:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .menu-toggle.active .bar:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
             }
             
             .hero-content h1 {
@@ -445,7 +526,7 @@
                 padding: 1.5rem;
             }
         }
-
+        
         @media (max-width: 480px) {
             .hero {
                 padding: 5rem 1rem;
@@ -472,109 +553,26 @@
                 gap: 2rem;
             }
         }
-
-        .service-card img {
-            max-width: 80px;
-            height: auto;
-            margin: 0 auto 1rem;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-        
-        .service-card:hover img {
-            transform: scale(1.1);
-        }
-
-        /* Mobile Menu Styles */
-.menu-toggle {
-    display: none;
-    cursor: pointer;
-    padding: 10px;
-}
-
-.menu-toggle .bar {
-    width: 25px;
-    height: 3px;
-    background-color: white;
-    margin: 5px 0;
-    display: block;
-    transition: all 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    header {
-        padding: 1rem 5%;
-    }
-    
-    .menu-toggle {
-        display: block;
-        z-index: 1001;
-    }
-    
-    .nav-menu {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 80%;
-        max-width: 300px;
-        height: 100vh;
-        background: #1a2a3a;
-        padding: 80px 20px 20px;
-        transition: right 0.3s ease;
-        z-index: 1000;
-        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    .nav-menu.active {
-        right: 0;
-    }
-    
-    header nav ul {
-        flex-direction: column;
-        gap: 1.5rem;
-    }
-    
-    header nav ul li {
-        width: 100%;
-    }
-    
-    header nav ul li a {
-        display: block;
-        padding: 10px;
-        width: 100%;
-    }
-    
-    /* Hamburger menu animation */
-    .menu-toggle.active .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-    
-    .menu-toggle.active .bar:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .menu-toggle.active .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-}
-
         
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
     <header>
-        <div class="logo">
-            <a href="{% url 'index' %}" style="text-decoration: none; color: white;">
-                <h1>Insurance portal</h1>
-            </a>
-        </div>
-        
-        <div class="menu-toggle" id="mobile-menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
+        <div class="logo-menu-container">
+            <div class="logo">
+                <a href="{% url 'index' %}" style="text-decoration: none; color: white;">
+                    <h1>Insurance portal</h1>
+                </a>
+            </div>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
         </div>
         
         <nav class="nav-menu">
@@ -586,6 +584,7 @@
             </ul>
         </nav>
     </header>
+    
     
     {% block content %}
     <!-- Content from child templates will be inserted here -->
