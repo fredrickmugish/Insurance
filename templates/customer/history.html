@@ -4,154 +4,179 @@
 {% load static %}
 
 <style>
-    /* Policy History Styles */
-    .history-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;  /* Increased from 20px */
+/* Policy History Styles */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px; /* Increased from 20px */
+}
+
+.history-title {
+    font-size: 26px; /* Increased from 22px */
+    font-weight: 600;
+    color: var(--gray-900);
+    position: relative;
+    padding-left: 18px; /* Increased from 15px */
+}
+
+.history-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px; /* Increased from 4px */
+    height: 26px; /* Increased from 22px */
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.history-table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: auto; /* This makes the container scrollable */
+    max-height: 500px; /* Set a maximum height to enable vertical scrolling */
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-    
-    .history-title {
-        font-size: 26px;  /* Increased from 22px */
-        font-weight: 600;
-        color: var(--gray-900);
-        position: relative;
-        padding-left: 18px;  /* Increased from 15px */
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    
-    .history-title::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 5px;  /* Increased from 4px */
-        height: 26px;  /* Increased from 22px */
-        background: var(--primary);
-        border-radius: 2px;
-    }
-    
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 650px; /* Ensures table doesn't get too compressed */
+}
+
+.history-table th {
+    background-color: var(--gray-50);
+    color: var(--gray-700);
+    font-weight: 600;
+    text-align: left;
+    padding: 16px 20px; /* Increased from 14px 16px */
+    font-size: 15px; /* Increased from 13px */
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky; /* Makes headers stick to the top when scrolling */
+    top: 0; /* Position at the top */
+    z-index: 10; /* Ensures headers appear above table content */
+}
+
+.history-table td {
+    padding: 16px 20px; /* Increased from 14px 16px */
+    font-size: 15px; /* Increased from 13px */
+    color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.history-table tr:hover td {
+    background-color: var(--gray-50);
+}
+
+.serial-number {
+    width: 90px; /* Increased from 80px */
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+.policy-name {
+    font-weight: 500;
+    color: var(--primary);
+    font-size: 15px; /* Added explicit font size */
+}
+
+.creation-date {
+    color: var(--gray-500);
+    font-size: 15px; /* Increased from 13px */
+}
+
+.status-badge {
+    padding: 6px 12px; /* Increased from 5px 10px */
+    border-radius: 20px;
+    font-size: 14px; /* Increased from 12px */
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status-pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.status-approved {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.status-rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.empty-state {
+    padding: 50px; /* Increased from 40px */
+    text-align: center;
+    color: var(--gray-500);
+}
+
+.empty-state i {
+    font-size: 56px; /* Increased from 48px */
+    margin-bottom: 18px; /* Increased from 15px */
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 20px; /* Added explicit font size */
+    margin-bottom: 10px; /* Added margin */
+}
+
+.empty-state p {
+    font-size: 16px; /* Added explicit font size */
+}
+
+/* Custom scrollbar for better appearance */
+.history-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.history-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.history-table-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.history-table-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
     .history-table-container {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-        animation: fadeIn 0.5s ease forwards;
+        margin: 0 -15px;
+        border-radius: 0;
     }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .history-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-    
-    .history-table th {
-        background-color: var(--gray-50);
-        color: var(--gray-700);
-        font-weight: 600;
-        text-align: left;
-        padding: 16px 20px;  /* Increased from 14px 16px */
-        font-size: 15px;  /* Increased from 13px */
-        border-bottom: 1px solid var(--gray-200);
-    }
-    
-    .history-table td {
-        padding: 16px 20px;  /* Increased from 14px 16px */
-        font-size: 15px;  /* Increased from 13px */
-        color: var(--gray-700);
-        border-bottom: 1px solid var(--gray-100);
-        vertical-align: middle;
-    }
-    
-    .history-table tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .history-table tr:hover td {
-        background-color: var(--gray-50);
-    }
-    
-    .serial-number {
-        width: 90px;  /* Increased from 80px */
-        color: var(--gray-500);
-        font-weight: 500;
-    }
-    
-    .policy-name {
-        font-weight: 500;
-        color: var(--primary);
-        font-size: 15px;  /* Added explicit font size */
-    }
-    
-    .creation-date {
-        color: var(--gray-500);
-        font-size: 15px;  /* Increased from 13px */
-    }
-    
-    .status-badge {
-        padding: 6px 12px;  /* Increased from 5px 10px */
-        border-radius: 20px;
-        font-size: 14px;  /* Increased from 12px */
-        font-weight: 600;
-        text-transform: uppercase;
-        display: inline-block;
-    }
-    
-    .status-pending {
-        background-color: rgba(245, 158, 11, 0.1);
-        color: #f59e0b;
-    }
-    
-    .status-approved {
-        background-color: rgba(16, 185, 129, 0.1);
-        color: #10b981;
-    }
-    
-    .status-rejected {
-        background-color: rgba(239, 68, 68, 0.1);
-        color: #ef4444;
-    }
-    
-    .empty-state {
-        padding: 50px;  /* Increased from 40px */
-        text-align: center;
-        color: var(--gray-500);
-    }
-    
-    .empty-state i {
-        font-size: 56px;  /* Increased from 48px */
-        margin-bottom: 18px;  /* Increased from 15px */
-        opacity: 0.5;
-    }
-    
-    .empty-state h3 {
-        font-size: 20px;  /* Added explicit font size */
-        margin-bottom: 10px;  /* Added margin */
-    }
-    
-    .empty-state p {
-        font-size: 16px;  /* Added explicit font size */
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .history-table-container {
-            margin: 0 -15px;
-            border-radius: 0;
-        }
-    }
+}
 </style>
 
 <div class="history-header">
@@ -178,7 +203,6 @@
                 <td>
                     {% if t.status == 'PENDING' %}
                     <span class="status-badge status-pending">Pending</span>
-                  
                     {% elif t.status == 'APPROVED' %}
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="status-badge status-approved">Approved</span>
@@ -187,7 +211,6 @@
                         </a>
                     </div>
                     
-
                     {% else %}
                     <span class="status-badge status-rejected">Rejected</span>
                     {% endif %}
