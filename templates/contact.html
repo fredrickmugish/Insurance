@@ -1,5 +1,4 @@
 {% extends 'indexbase.html' %}
-
 {% block content %}
 <section class="contact">
     <div class="contact-container">
@@ -25,7 +24,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="contact-form">
             <h3>Send Us a Message</h3>
             {% if messages %}
@@ -123,6 +122,8 @@
         font-family: inherit;
         font-size: 1rem;
         transition: border-color 0.3s;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .contact-form input:focus,
@@ -151,6 +152,7 @@
         justify-content: center;
         gap: 8px;
         transition: all 0.3s ease;
+        width: 100%;
     }
     
     .contact-form button:hover {
@@ -171,6 +173,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
+        box-sizing: border-box;
     }
     
     .alert-content {
@@ -291,6 +294,39 @@
         
         .contact-details div {
             gap: 8px;
+        }
+        
+        .contact-details i {
+            font-size: 1rem;
+        }
+        
+        .contact-form button {
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* Additional mobile optimization */
+    @media (max-width: 360px) {
+        .contact-container {
+            padding: 10px 8px;
+        }
+        
+        .contact-info h2 {
+            font-size: 1.3rem;
+        }
+        
+        .contact-info p {
+            font-size: 0.9rem;
+        }
+        
+        .contact-form h3 {
+            font-size: 1.1rem;
+        }
+        
+        .contact-form input,
+        .contact-form textarea {
+            font-size: 0.9rem;
+            padding: 8px 12px;
         }
     }
 </style>
