@@ -2,254 +2,247 @@
 
 {% block content %}
 <style>
-/* Category List Styles */
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.category-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--gray-900);
-    position: relative;
-    padding-left: 15px;
-}
-
-.category-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    background: var(--primary);
-    border-radius: 2px;
-}
-
-.categories-table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.categories-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.categories-table th {
-    background-color: var(--gray-50);
-    color: var(--gray-700);
-    font-weight: 600;
-    text-align: left;
-    padding: 16px 20px;
-    font-size: 14px;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.categories-table td {
-    padding: 16px 20px;
-    font-size: 14px;
-    color: var(--gray-700);
-    border-bottom: 1px solid var(--gray-100);
-}
-
-.categories-table tr:last-child td {
-    border-bottom: none;
-}
-
-.categories-table tr:hover td {
-    background-color: var(--gray-50);
-}
-
-.serial-number {
-    width: 80px;
-    color: var(--gray-500);
-    font-weight: 500;
-}
-
-.category-name {
-    font-weight: 500;
-}
-
-.provider-name {
-    color: var(--gray-600);
-    width: 200px;
-}
-
-.view-policies {
-    width: 150px;
-}
-
-.view-policies-btn {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    display: inline-block;
-    transition: all 0.2s ease;
-    text-decoration: none;
-}
-
-.view-policies-btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-}
-
-.empty-state {
-    padding: 40px;
-    text-align: center;
-    color: var(--gray-500);
-}
-
-.empty-state i {
-    font-size: 48px;
-    margin-bottom: 15px;
-    opacity: 0.5;
-}
-
-/* Mobile card view for categories */
-.category-cards {
-    display: none;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.category-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.5s ease forwards;
-}
-
-.category-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.category-card-number {
-    background-color: var(--gray-100);
-    color: var(--gray-700);
-    font-weight: 600;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
-}
-
-.category-card-name {
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--gray-900);
-    margin-bottom: 8px;
-}
-
-.category-card-provider {
-    font-size: 14px;
-    color: var(--gray-600);
-}
-
-.category-card-provider span {
-    font-weight: 500;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .categories-table th,
-    .categories-table td {
-        padding: 14px 16px;
-    }
-    
-    .category-title {
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 768px) {
-    .categories-table .provider-name,
-    .categories-table th:nth-child(3) {
-        display: none;
-    }
-    
-    .categories-table th,
-    .categories-table td {
-        padding: 12px 15px;
-    }
-    
-    .category-title {
-        font-size: 20px;
-    }
-}
-
-@media (max-width: 576px) {
+    /* Category List Styles */
     .category-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .categories-table {
-        display: none;
-    }
-    
-    .category-cards {
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
     
     .category-title {
-        font-size: 18px;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
     }
     
     .category-title::before {
-        height: 20px;
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .categories-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: fadeIn 0.5s ease forwards;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .categories-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .categories-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 15px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .categories-table td {
+        padding: 16px 20px;
+        font-size: 15px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .categories-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .categories-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .serial-number {
+        width: 100px;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    
+    .category-name {
+        font-weight: 500;
+        color: var(--primary);
+    }
+    
+    .provider-name {
+        color: var(--gray-700);
+        width: 250px;
+    }
+    
+    .view-policies {
+        width: 150px;
+    }
+    
+    .view-policies-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        display: inline-block;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    
+    .view-policies-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
     }
     
     .empty-state i {
-        font-size: 36px;
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
     }
     
-    .empty-state h3 {
-        font-size: 18px;
+    /* Mobile card view for categories */
+    .category-cards {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
     }
-}
-
-@media (max-width: 400px) {
+    
     .category-card {
-        padding: 12px;
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .category-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .category-card-number {
+        background-color: var(--gray-100);
+        color: var(--gray-700);
+        font-weight: 600;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
     }
     
     .category-card-name {
-        font-size: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--gray-900);
+        margin-bottom: 8px;
     }
     
     .category-card-provider {
-        font-size: 13px;
+        font-size: 14px;
+        color: var(--gray-600);
     }
-}
+    
+    .category-card-provider span {
+        font-weight: 500;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .categories-table th,
+        .categories-table td {
+            padding: 14px 16px;
+        }
+        .category-title {
+            font-size: 22px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .categories-table .provider-name,
+        .categories-table th:nth-child(3) {
+            display: none;
+        }
+        .categories-table th,
+        .categories-table td {
+            padding: 12px 15px;
+        }
+        .category-title {
+            font-size: 20px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .category-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .categories-table {
+            display: none;
+        }
+        .category-cards {
+            display: flex;
+        }
+        .category-title {
+            font-size: 18px;
+        }
+        .category-title::before {
+            height: 20px;
+        }
+        .empty-state i {
+            font-size: 36px;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+        }
+    }
+    
+    @media (max-width: 400px) {
+        .category-card {
+            padding: 12px;
+        }
+        .category-card-name {
+            font-size: 15px;
+        }
+        .category-card-provider {
+            font-size: 13px;
+        }
+    }
 </style>
 
 <div class="category-header">
@@ -263,7 +256,7 @@
             <tr>
                 <th class="serial-number">Serial No.</th>
                 <th>Category Name</th>
-                <th class="provider-name">Provider</th>
+                <th class="provider-name">Insurance Provider</th>
             </tr>
         </thead>
         <tbody>
@@ -276,7 +269,6 @@
             {% endfor %}
         </tbody>
     </table>
-    
     <!-- Mobile card view -->
     <div class="category-cards">
         {% for category in categories %}

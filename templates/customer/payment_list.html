@@ -1,128 +1,132 @@
-<!-- templates/customer/payment_list.html -->
 {% extends 'customer/customer_dashboard.html' %}
+{% load static %}
 
 {% block content %}
 <style>
-.payments-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.payments-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--gray-900);
-    position: relative;
-    padding-left: 15px;
-}
-
-.payments-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    background: var(--primary);
-    border-radius: 2px;
-}
-
-.payments-table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: auto; /* Makes the container scrollable */
-    max-height: 500px; /* Set a maximum height for vertical scrolling */
-}
-
-.payments-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 750px; /* Ensures the table doesn't get too compressed */
-}
-
-.payments-table th {
-    background-color: var(--gray-50);
-    color: var(--gray-700);
-    font-weight: 600;
-    text-align: left;
-    padding: 16px 20px;
-    font-size: 14px;
-    border-bottom: 1px solid var(--gray-200);
-    position: sticky; /* Makes headers stick to the top when scrolling */
-    top: 0; /* Position at the top */
-    z-index: 10; /* Ensures headers appear above table content */
-}
-
-.payments-table td {
-    padding: 16px 20px;
-    font-size: 14px;
-    color: var(--gray-700);
-    border-bottom: 1px solid var(--gray-100);
-    vertical-align: middle;
-}
-
-.status-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: inline-block;
-}
-
-.status-pending {
-    background-color: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-}
-
-.status-confirmed {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-.status-rejected {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-}
-
-.empty-state {
-    padding: 40px;
-    text-align: center;
-    color: var(--gray-500);
-}
-
-/* Custom scrollbar for better appearance */
-.payments-table-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.payments-table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.payments-table-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-}
-
-.payments-table-container::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .payments-table-container {
-        margin: 0 -15px;
-        border-radius: 0;
+    .payments-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
     }
-}
+    
+    .payments-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .payments-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .payments-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: auto;
+        max-height: 500px;
+    }
+    
+    .payments-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 750px;
+    }
+    
+    .payments-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    .payments-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .status-confirmed {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .receipt-link {
+        color: var(--primary);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .receipt-link:hover {
+        text-decoration: underline;
+    }
+    
+    /* Custom scrollbar for better appearance */
+    .payments-table-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .payments-table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .payments-table-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    
+    .payments-table-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
 </style>
 
 <div class="payments-header">
@@ -139,6 +143,7 @@
                 <th>Payment Date</th>
                 <th>Payment Method</th>
                 <th>Status</th>
+                <th>Receipt</th>
                 <th>Comment</th>
             </tr>
         </thead>
@@ -154,7 +159,16 @@
                         {{ payment.get_status_display }}
                     </span>
                 </td>
-                <td>{{ payment.admin_comment|default:"" }}</td>
+                <td>
+                    {% if payment.receipt_image %}
+                    <a href="{{ payment.receipt_image.url }}" target="_blank" class="receipt-link">
+                        <i class="fas fa-receipt"></i> View Receipt
+                    </a>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td>{{ payment.admin_comment|default:"-" }}</td>
             </tr>
             {% endfor %}
         </tbody>

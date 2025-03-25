@@ -28,3 +28,12 @@ class Policy(models.Model):
     
     def __str__(self):
         return f"{self.policy_name} by {self.provider.username}"
+    
+
+class ProviderProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='provider_profile')
+    company_name = models.CharField(max_length=100)
+    business_license = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return f"{self.company_name} - {self.user.username}"

@@ -315,7 +315,7 @@
 </style>
 
 <div class="dashboard-header">
-    <h1 class="dashboard-title">Welcome back, {{request.user.username}}!</h1>
+    <h1 class="dashboard-title">Welcome {{request.user.username}}!</h1>
     <p class="dashboard-subtitle">Here's an overview of your insurance portfolio and recent activities.</p>
 </div>
 
@@ -324,7 +324,7 @@
         <div class="stat-card-content">
             <i class="fas fa-file-signature stat-card-icon"></i>
             <i class="fas fa-file-signature stat-card-bg-icon"></i>
-            <div class="stat-card-title">Available Policies</div>
+            <div class="stat-card-title">Available Providers</div>
             <div class="stat-card-value">{{available_policy}}</div>
             <div class="stat-card-description">Explore new insurance options</div>
         </div>

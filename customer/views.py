@@ -33,12 +33,51 @@ def customer_dashboard_view(request):
 def apply_policy_view(request):
     provider_group = Group.objects.get(name='provider')
     providers = User.objects.filter(groups=provider_group)
+    
+    # Add policy count for each provider
+    for provider in providers:
+        provider.policy_count = Policy.objects.filter(provider=provider).count()
+        # Get unique categories count
+        provider.category_count = Policy.objects.filter(provider=provider).values('category').distinct().count()
+    
     policies = Policy.objects.all()
     
     return render(request, 'customer/apply_policy.html', {
         'policies': policies,
         'providers': providers
     })
+
+@login_required
+def get_provider_policies(request, provider_id):
+    provider = get_object_or_404(User, id=provider_id)
+    policies = Policy.objects.filter(provider=provider)
+    
+    # Convert policies to JSON-serializable format
+    policies_data = []
+    for policy in policies:
+        # Handle different policy model structures
+        category_name = ''
+        if hasattr(policy, 'category'):
+            if isinstance(policy.category, str):
+                category_name = policy.category
+            elif hasattr(policy.category, 'category_name'):
+                category_name = policy.category.category_name
+        
+        creation_date = ''
+        if hasattr(policy, 'creation_date'):
+            creation_date = policy.creation_date.isoformat()
+        
+        policies_data.append({
+            'id': policy.id,
+            'policy_name': policy.policy_name,
+            'category': category_name,
+            'sum_assurance': policy.sum_assurance,
+            'premium': policy.premium,
+            'tenure': policy.tenure,
+            'creation_date': creation_date
+        })
+    
+    return JsonResponse({'policies': policies_data})
 
 
 @login_required
@@ -135,35 +174,72 @@ def mark_all_read(request):
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return redirect('customer:notifications_list')
 
-
 @login_required
-def payment_list(request):
-    """View to display all payments for the customer"""
-    payments = Payment.objects.filter(policy_record__customer=request.user)
-    return render(request, 'customer/payment_list.html', {'payments': payments})
-
-@login_required
-def make_payment_view(request, policy_record_id):
-    policy_record = get_object_or_404(PolicyRecord, id=policy_record_id, customer=request.user)
+def make_payment_view(request, policy_id):
+    """View for customers to make payments for their policies"""
+    from .models import PolicyRecord, Payment
+    from .forms import PaymentForm
+    from django.contrib import messages
+    from django.shortcuts import get_object_or_404
+    
+    # Get the policy record and verify it belongs to this customer
+    policy_record = get_object_or_404(
+        PolicyRecord,
+        id=policy_id,  # Changed from policy_id to policy_record_id
+        customer=request.user,
+        status='APPROVED',  # Only approved policies can be paid
+        payment_status__in=['NOT_PAID', 'REJECTED']  # Only unpaid or rejected payments can be paid
+    )
     
     if request.method == 'POST':
         form = PaymentForm(request.POST, request.FILES)
         if form.is_valid():
             payment = form.save(commit=False)
             payment.policy_record = policy_record
-            payment.customer = request.user
-            payment.status = 'PENDING'  # Set initial status to pending
+            payment.status = 'PENDING'
+            
+            # Set amount to policy premium if not provided
+            if not payment.amount:
+                payment.amount = policy_record.policy.premium
+                
+            # Save the payment
             payment.save()
             
-            messages.success(request, 'Your payment has been submitted and is pending confirmation.')
-            return redirect('customer:history')
+            # Update policy record payment status
+            policy_record.payment_status = 'PENDING'
+            policy_record.save()
+            
+            # Create notification for the provider
+            from .utils import create_notification
+            create_notification(
+                recipient=policy_record.policy.provider,
+                notification_type='new_payment',
+                title='New Payment Received',
+                message=f'A new payment of ${payment.amount} has been submitted for {policy_record.policy.policy_name} by {request.user.get_full_name()}.',
+                related_link=f'/provider/admin-payment-detail/{payment.id}/'
+            )
+            
+            messages.success(request, 'Your payment has been submitted successfully and is pending approval.')
+            return redirect('customer:payment_list')  # Changed to match your URL name
+        else:
+            messages.error(request, 'There was an error with your payment submission. Please check the form and try again.')
     else:
-        form = PaymentForm()
+        form = PaymentForm(initial={'amount': policy_record.policy.premium})
     
     return render(request, 'customer/make_payment.html', {
         'form': form,
         'policy_record': policy_record
     })
+
+@login_required
+def payment_list(request):
+    """View to display all payments for the customer"""
+    from .models import Payment
+    
+    # Get all payments for this customer
+    payments = Payment.objects.filter(policy_record__customer=request.user).order_by('-created_at')
+    
+    return render(request, 'customer/payment_list.html', {'payments': payments})
 
 @login_required
 def profile_view(request):
@@ -260,3 +336,4 @@ def policy_categories_view(request):
     }
     
     return render(request, 'customer/policy_categories.html', context)
+

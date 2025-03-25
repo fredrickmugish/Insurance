@@ -42,12 +42,20 @@ def admin_view_customer_view(request):
     ).distinct()
     return render(request, 'provider/admin_view_customer.html', {'customers': customers})
 @login_required
+
 def update_customer_view(request, pk):
     User = get_user_model()
+    
+    # Get the user
     user = User.objects.filter(
         customer_policy_records__policy__provider=request.user,
         id=pk
     ).first()
+    
+    if not user:
+        # Handle case where user is not found
+        messages.error(request, "Customer not found.")
+        return redirect('provider:admin-view-customer')
     
     class CustomUserChangeForm(UserChangeForm):
         class Meta:
@@ -58,11 +66,42 @@ def update_customer_view(request, pk):
         form = CustomUserChangeForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            
+            # Get profile data from the form
+            phone_number = request.POST.get('phone_number', '')
+            identity_type = request.POST.get('identity_type', '')
+            identity_number = request.POST.get('identity_number', '')
+            
+            # Validate phone number
+            if phone_number and (len(phone_number) != 10 or not phone_number.isdigit()):
+                messages.error(request, "Phone number must be exactly 10 digits.")
+                return render(request, 'provider/update_customer.html', {'form': form, 'user': user})
+            
+            # Validate identity number based on type
+            if identity_type == 'nida' and identity_number and len(identity_number) != 20:
+                messages.error(request, "NIDA number must be exactly 20 characters.")
+                return render(request, 'provider/update_customer.html', {'form': form, 'user': user})
+            
+            # Get or create user profile
+            try:
+                profile = user.profile
+            except:
+                from customer.models import UserProfile
+                profile = UserProfile.objects.create(user=user)
+            
+            # Update profile fields
+            profile.phone_number = phone_number
+            profile.identity_type = identity_type
+            profile.identity_number = identity_number
+            profile.save()
+            
+            messages.success(request, "Customer information updated successfully.")
             return redirect('provider:admin-view-customer')
     else:
         form = CustomUserChangeForm(instance=user)
     
-    return render(request, 'provider/update_customer.html', {'form': form})
+    return render(request, 'provider/update_customer.html', {'form': form, 'user': user})
+
 
 @login_required
 def delete_customer_view(request, pk):
@@ -278,8 +317,26 @@ def update_question_view(request, pk):
 def admin_payment_list(request):
     """View to display all payments for the provider"""
     from customer.models import Payment
+    from django.db.models import Sum
+    
+    # Get all payments for this provider
     payments = Payment.objects.filter(policy_record__policy__provider=request.user)
-    return render(request, 'provider/admin_payment_list.html', {'payments': payments})
+    
+    # Calculate analytics
+    total_amount = payments.aggregate(Sum('amount'))['amount__sum'] or 0
+    pending_count = payments.filter(status='PENDING').count()
+    confirmed_count = payments.filter(status='CONFIRMED').count()
+    rejected_count = payments.filter(status='REJECTED').count()
+    
+    context = {
+        'payments': payments,
+        'total_amount': total_amount,
+        'pending_count': pending_count,
+        'confirmed_count': confirmed_count,
+        'rejected_count': rejected_count,
+    }
+    
+    return render(request, 'provider/admin_payment_list.html', context)
 
 @login_required
 def admin_payment_detail(request, payment_id):
@@ -287,18 +344,32 @@ def admin_payment_detail(request, payment_id):
     from customer.models import Payment
     from django.contrib import messages
     from django.shortcuts import get_object_or_404
-    payment = get_object_or_404(Payment, 
-                               id=payment_id, 
-                               policy_record__policy__provider=request.user)
+    from django.utils import timezone
+    from customer.utils import create_notification
+    
+    # Get the payment and verify it belongs to this provider
+    payment = get_object_or_404(
+        Payment,
+        id=payment_id,
+        policy_record__policy__provider=request.user
+    )
     
     if request.method == 'POST':
         action = request.POST.get('action')
         comment = request.POST.get('admin_comment', '')
-        
         payment.admin_comment = comment
+        
+        # Record who processed this payment and when
+        payment.processed_by = request.user
+        payment.processed_at = timezone.now()
         
         if action == 'confirm':
             payment.status = 'CONFIRMED'
+            
+            # Update the policy record's payment status to PAID
+            policy_record = payment.policy_record
+            policy_record.payment_status = 'PAID'
+            policy_record.save()
             
             # Create notification for the customer
             create_notification(
@@ -310,25 +381,29 @@ def admin_payment_detail(request, payment_id):
             )
             
             messages.success(request, 'Payment has been confirmed.')
-        
+            
         elif action == 'reject':
             payment.status = 'REJECTED'
+            
+            # Update the policy record's payment status back to NOT_PAID
+            policy_record = payment.policy_record
+            policy_record.payment_status = 'NOT_PAID'
+            policy_record.save()
             
             # Create notification for the customer
             create_notification(
                 recipient=payment.policy_record.customer,
-                notification_type='payment_received',
+                notification_type='payment_rejected',
                 title='Payment Rejected',
                 message=f'Your payment of ${payment.amount} for {payment.policy_record.policy.policy_name} has been rejected. Reason: {comment}',
                 related_link=f'/customer/payments/'
             )
             
             messages.warning(request, 'Payment has been rejected.')
-        
+            
         payment.save()
         return redirect('provider:admin-payment-list')
     
-
     return render(request, 'provider/admin_payment_detail.html', {'payment': payment})
 
 @login_required

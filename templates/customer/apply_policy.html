@@ -4,7 +4,7 @@
 {% load static %}
 
 <style>
-    /* Available Policies Styles */
+    /* Available Providers Styles */
     .policies-header {
         display: flex;
         justify-content: space-between;
@@ -13,11 +13,11 @@
     }
     
     .policies-title {
-        font-size: 26px;  /* Increased from 22px */
+        font-size: 26px;
         font-weight: 600;
         color: var(--gray-900);
         position: relative;
-        padding-left: 18px;  /* Increased from 15px */
+        padding-left: 18px;
     }
     
     .policies-title::before {
@@ -26,8 +26,8 @@
         left: 0;
         top: 50%;
         transform: translateY(-50%);
-        width: 5px;  /* Increased from 4px */
-        height: 26px;  /* Increased from 22px */
+        width: 5px;
+        height: 26px;
         background: var(--primary);
         border-radius: 2px;
     }
@@ -35,11 +35,11 @@
     .filter-container {
         display: flex;
         align-items: center;
-        gap: 12px;  /* Increased from 10px */
+        gap: 12px;
     }
     
     .filter-label {
-        font-size: 15px;  /* Increased from 13px */
+        font-size: 15px;
         font-weight: 500;
         color: var(--gray-700);
         white-space: nowrap;
@@ -49,10 +49,10 @@
         background-color: white;
         border: 1px solid var(--gray-300);
         border-radius: 8px;
-        padding: 10px 15px;  /* Increased from 8px 12px */
-        font-size: 15px;  /* Increased from 13px */
+        padding: 10px 15px;
+        font-size: 15px;
         color: var(--gray-700);
-        min-width: 200px;  /* Increased from 180px */
+        min-width: 200px;
         transition: all 0.2s ease;
     }
     
@@ -69,6 +69,8 @@
         overflow: hidden;
         animation: fadeIn 0.5s ease forwards;
         overflow-x: auto;
+        max-width: 1000px;
+        margin: 0 auto;
     }
     
     @keyframes fadeIn {
@@ -93,15 +95,15 @@
         color: var(--gray-700);
         font-weight: 600;
         text-align: left;
-        padding: 14px 12px;  /* Increased from 12px 10px */
-        font-size: 15px;  /* Increased from 13px */
+        padding: 14px 12px;
+        font-size: 15px;
         border-bottom: 1px solid var(--gray-200);
         white-space: nowrap;
     }
     
     .policies-table td {
-        padding: 12px;  /* Increased from 10px */
-        font-size: 15px;  /* Increased from 13px */
+        padding: 12px;
+        font-size: 15px;
         color: var(--gray-700);
         border-bottom: 1px solid var(--gray-100);
         vertical-align: middle;
@@ -116,41 +118,41 @@
     }
     
     .serial-number {
-        width: 70px;  /* Increased from 60px */
+        width: 70px;
         color: var(--gray-500);
         font-weight: 500;
     }
     
     .provider-column {
-        width: 120px;  /* Increased from 100px */
+        width: 120px;
     }
     
     .policy-name-column {
-        width: 140px;  /* Increased from 120px */
+        width: 140px;
     }
     
     .category-column {
-        width: 120px;  /* Increased from 100px */
+        width: 120px;
     }
     
     .amount-column {
-        width: 110px;  /* Increased from 90px */
+        width: 110px;
     }
     
     .premium-column {
-        width: 100px;  /* Increased from 80px */
+        width: 100px;
     }
     
     .tenure-column {
-        width: 80px;  /* Increased from 70px */
+        width: 80px;
     }
     
     .date-column {
-        width: 120px;  /* Increased from 100px */
+        width: 120px;
     }
     
     .action-column {
-        width: 100px;  /* Increased from 80px */
+        width: 100px;
         text-align: center;
     }
     
@@ -160,7 +162,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 140px;  /* Increased from 120px */
+        max-width: 140px;
         display: block;
     }
     
@@ -169,14 +171,13 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 120px;  /* Increased from 100px */
+        max-width: 120px;
         display: block;
     }
     
-  
     .creation-date {
         color: var(--gray-500);
-        font-size: 14px;  /* Increased from 12px */
+        font-size: 14px;
         white-space: nowrap;
     }
     
@@ -185,14 +186,14 @@
         color: white;
         border: none;
         border-radius: 6px;
-        padding: 8px 12px;  /* Increased from 6px 10px */
-        font-size: 14px;  /* Increased from 12px */
+        padding: 8px 12px;
+        font-size: 14px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
-        gap: 6px;  /* Increased from 4px */
+        gap: 6px;
         text-decoration: none;
         white-space: nowrap;
     }
@@ -204,24 +205,121 @@
     }
     
     .empty-state {
-        padding: 50px;  /* Increased from 40px */
+        padding: 50px;
         text-align: center;
         color: var(--gray-500);
     }
     
     .empty-state i {
-        font-size: 56px;  /* Increased from 48px */
-        margin-bottom: 18px;  /* Increased from 15px */
+        font-size: 56px;
+        margin-bottom: 18px;
         opacity: 0.5;
     }
     
     .empty-state h3 {
-        font-size: 20px;  /* Added font size */
-        margin-bottom: 10px;  /* Added margin */
+        font-size: 20px;
+        margin-bottom: 10px;
     }
     
     .empty-state p {
-        font-size: 16px;  /* Added font size */
+        font-size: 16px;
+    }
+    
+    /* Provider cards styles */
+    .providers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .provider-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .provider-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .provider-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+    }
+    
+    .provider-name-header {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .provider-info {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    
+    .provider-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .provider-stats {
+        display: flex;
+        margin-bottom: 15px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .stat {
+        flex: 0 0 auto;
+        text-align: center;
+        padding: 10px 20px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--gray-600);
+    }
+    
+    /* Back button */
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--gray-200);
+        color: var(--gray-700);
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 20px;
+        float: left;
+        width: fit-content;
+    }
+    
+    .back-button:hover {
+        background-color: var(--gray-300);
     }
     
     /* Responsive adjustments */
@@ -229,6 +327,10 @@
         .policies-table-container {
             margin: 0 -15px;
             border-radius: 0;
+        }
+        
+        .providers-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         }
     }
     
@@ -246,89 +348,242 @@
         .filter-select {
             flex-grow: 1;
         }
+        
+        .providers-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
 <div class="policies-header">
-    <h2 class="policies-title">Available Policies</h2>
-    <div class="filter-container">
-        <span class="filter-label">Filter by Provider:</span>
-        <select id="providerFilter" class="filter-select">
-            <option value="">All Providers</option>
-            {% for provider in providers %}
-            <option value="{{ provider.username }}">{{ provider.username }}</option>
-            {% endfor %}
+    <h2 class="policies-title" id="page-title">Available Providers</h2>
+    <div class="filter-container" id="filter-container" style="display: none;">
+        <span class="filter-label">Filter by Category:</span>
+        <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
         </select>
     </div>
 </div>
 
-<div class="policies-table-container">
-    {% if policies %}
-    <table class="policies-table" id="policiesTable">
-        <thead>
-            <tr>
-                <th class="serial-number">S.No</th>
-                <th class="provider-column">Provider</th>
-                <th class="policy-name-column">Policy Name</th>
-                <th class="category-column">Category</th>
-                <th class="amount-column">Sum Assurance</th>
-                <th class="premium-column">Premium</th>
-                <th class="tenure-column">Tenure</th>
-                <th class="date-column">Date</th>
-                <th class="action-column">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in policies %}
-            <tr class="policy-row" data-provider="{{ t.provider.username }}">
-                <td class="serial-number">{{ forloop.counter }}</td>
-                <td class="provider-column">
-                    <span class="provider-name" title="{{ t.provider.username }}">{{ t.provider.username }}</span>
-                </td>
-                <td class="policy-name-column">
-                    <span class="policy-name" title="{{ t.policy_name }}">{{ t.policy_name }}</span>
-                </td>
-                <td class="category-column">
-                    <span class="policy-category" title="{{ t.category }}">{{ t.category }}</span>
-                </td>
-                <td class="amount-column policy-amount">${{ t.sum_assurance }}</td>
-                <td class="premium-column policy-amount">${{ t.premium }}</td>
-                <td class="tenure-column">{{ t.tenure }}y</td>
-                <td class="date-column creation-date">{{ t.creation_date|date:"d M Y" }}</td>
-                <td class="action-column">
-                    <a href="{% url 'customer:apply' t.id %}" class="btn-apply">
-                        <i class="fas fa-file-signature"></i> Apply
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<!-- Providers View -->
+<div id="providers-view">
+    {% if providers %}
+    <div class="providers-grid">
+        {% for provider in providers %}
+        <div class="provider-card" data-provider-id="{{ provider.id }}">
+            <div class="provider-header">
+                <div class="provider-name-header">{{ provider.username }}</div>
+                <div class="provider-info">Insurance Provider</div>
+            </div>
+            <div class="provider-body">
+                <div class="provider-stats">
+                    <div class="stat">
+                        <div class="stat-value">{{ provider.policy_count }}</div>
+                        <div class="stat-label">Policies</div>
+                    </div>
+                </div>
+                <a href="#" class="btn-apply view-policies-btn" data-provider-id="{{ provider.id }}">
+                    <i class="fas fa-file-alt"></i> View Policies
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
     <div class="empty-state">
-        <i class="fas fa-file-alt"></i>
-        <h3>No policies available</h3>
-        <p>There are no insurance policies available at the moment.</p>
+        <i class="fas fa-building"></i>
+        <h3>No providers available</h3>
+        <p>There are no insurance providers available at the moment.</p>
     </div>
     {% endif %}
 </div>
 
+<!-- Policies View (Initially Hidden) -->
+<div id="policies-view" style="display: none;">
+    <button id="back-to-providers" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Providers
+    </button>
+    <div style="clear: both;"></div>
+    <div class="policies-table-container">
+        <table class="policies-table" id="policiesTable">
+            <thead>
+                <tr>
+                    <th class="serial-number">S.No</th>
+                    <th class="policy-name-column">Policy Name</th>
+                    <th class="category-column">Category</th>
+                    <th class="amount-column">Sum Assurance</th>
+                    <th class="premium-column">Premium</th>
+                    <th class="tenure-column">Tenure</th>
+                    <th class="date-column">Date</th>
+                    <th class="action-column">Action</th>
+                </tr>
+            </thead>
+            <tbody id="policies-tbody">
+                <!-- Policies will be loaded here via AJAX -->
+            </tbody>
+        </table>
+        <div id="no-policies-message" class="empty-state" style="display: none;">
+            <i class="fas fa-file-alt"></i>
+            <h3>No policies available</h3>
+            <p>This provider doesn't have any insurance policies available at the moment.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden input to store the apply URL pattern -->
+<input type="hidden" id="apply-url-pattern" value="{% url 'customer:apply' 0 %}">
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const providerFilter = document.getElementById('providerFilter');
-        const policyRows = document.querySelectorAll('.policy-row');
+        const providersView = document.getElementById('providers-view');
+        const policiesView = document.getElementById('policies-view');
+        const pageTitle = document.getElementById('page-title');
+        const backToProvidersBtn = document.getElementById('back-to-providers');
+        const policiesTbody = document.getElementById('policies-tbody');
+        const noPoliciesMessage = document.getElementById('no-policies-message');
+        const filterContainer = document.getElementById('filter-container');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const applyUrlPattern = document.getElementById('apply-url-pattern').value;
         
-        providerFilter.addEventListener('change', function() {
-            const selectedProvider = this.value;
-            
-            policyRows.forEach(row => {
-                if (!selectedProvider || row.getAttribute('data-provider') === selectedProvider) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+        // Handle view policies button click
+        document.querySelectorAll('.view-policies-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const providerId = this.getAttribute('data-provider-id');
+                const providerName = this.closest('.provider-card').querySelector('.provider-name-header').textContent;
+                
+                // Update page title
+                pageTitle.textContent = `Policies by ${providerName}`;
+                
+                // Show filter
+                filterContainer.style.display = 'flex';
+                
+                // Fetch policies for this provider
+                fetchProviderPolicies(providerId, providerName);
+                
+                // Hide providers view, show policies view
+                providersView.style.display = 'none';
+                policiesView.style.display = 'block';
             });
         });
-    });
-</script>
-{% endblock content %}
+        
+        // Handle back to providers button click
+        backToProvidersBtn.addEventListener('click', function() {
+            // Reset page title
+            pageTitle.textContent = 'Available Providers';
+            
+            // Hide filter
+            filterContainer.style.display = 'none';
+            
+            // Show providers view, hide policies view
+            providersView.style.display = 'block';
+            policiesView.style.display = 'none';
+        });
+        
+              // Function to fetch policies for a specific provider
+              function fetchProviderPolicies(providerId, providerName) {
+                // Clear existing policies
+                policiesTbody.innerHTML = '';
+                
+                // Show loading state
+                policiesTbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Loading policies...</td></tr>';
+                
+                // Fetch policies from the server
+                fetch(`/customer/get-provider-policies/${providerId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear loading state
+                        policiesTbody.innerHTML = '';
+                        
+                        if (data.policies.length === 0) {
+                            // Show no policies message
+                            document.querySelector('.policies-table').style.display = 'none';
+                            noPoliciesMessage.style.display = 'block';
+                        } else {
+                            // Hide no policies message
+                            document.querySelector('.policies-table').style.display = 'table';
+                            noPoliciesMessage.style.display = 'none';
+                            
+                            // Populate categories for filtering
+                            const categories = [...new Set(data.policies.map(policy => policy.category))];
+                            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+                            categories.forEach(category => {
+                                if (category) {
+                                    categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
+                                }
+                            });
+                            
+                            // Populate policies table
+                            data.policies.forEach((policy, index) => {
+                                const row = document.createElement('tr');
+                                row.className = 'policy-row';
+                                row.setAttribute('data-category', policy.category);
+                                
+                                let formattedDate = 'N/A';
+                                if (policy.creation_date) {
+                                    const date = new Date(policy.creation_date);
+                                    formattedDate = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                                }
+                                
+                                // Create the apply URL by replacing the placeholder ID (0) with the actual policy ID
+                                const applyUrl = applyUrlPattern.replace('0', policy.id);
+                                
+                                row.innerHTML = `
+                                    <td class="serial-number">${index + 1}</td>
+                                    <td class="policy-name-column">
+                                        <span class="policy-name" title="${policy.policy_name}">${policy.policy_name}</span>
+                                    </td>
+                                    <td class="category-column">
+                                        <span class="policy-category" title="${policy.category}">${policy.category || 'N/A'}</span>
+                                    </td>
+                                    <td class="amount-column policy-amount">$${policy.sum_assurance}</td>
+                                    <td class="premium-column policy-amount">$${policy.premium}</td>
+                                    <td class="tenure-column">${policy.tenure}y</td>
+                                    <td class="date-column creation-date">${formattedDate}</td>
+                                    <td class="action-column">
+                                        <a href="${applyUrl}" class="btn-apply">
+                                            <i class="fas fa-file-signature"></i> Apply
+                                        </a>
+                                    </td>
+                                `;
+                                
+                                policiesTbody.appendChild(row);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching policies:', error);
+                        policiesTbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: red;">Error loading policies. Please try again.</td></tr>';
+                    });
+            }
+            
+            // Handle category filter change
+            categoryFilter.addEventListener('change', function() {
+                const selectedCategory = this.value;
+                const policyRows = document.querySelectorAll('.policy-row');
+                
+                policyRows.forEach(row => {
+                    if (!selectedCategory || row.getAttribute('data-category') === selectedCategory) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Make provider cards clickable (same as clicking the View Policies button)
+            document.querySelectorAll('.provider-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't trigger if the actual button was clicked (it has its own handler)
+                    if (!e.target.closest('.view-policies-btn')) {
+                        const viewPoliciesBtn = this.querySelector('.view-policies-btn');
+                        if (viewPoliciesBtn) {
+                            viewPoliciesBtn.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    {% endblock content %}
+    

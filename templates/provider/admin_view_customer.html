@@ -2,218 +2,249 @@
 
 {% block content %}
 <style>
-/* Modern Table Styles */
-.customer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.customer-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--gray-900);
-    position: relative;
-    padding-left: 15px;
-}
-
-.customer-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    background: var(--primary);
-    border-radius: 2px;
-}
-
-.add-customer-btn {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.add-customer-btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-}
-
-.customers-table-container {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: auto; /* Changed from hidden to auto to enable scrolling */
-    max-height: 500px; /* Set a maximum height for vertical scrolling */
-    animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.customers-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    min-width: 700px; /* Ensures the table doesn't get too compressed */
-}
-
-.customers-table th {
-    background-color: var(--gray-50);
-    color: var(--gray-700);
-    font-weight: 600;
-    text-align: left;
-    padding: 16px 20px;
-    font-size: 14px;
-    border-bottom: 1px solid var(--gray-200);
-    position: sticky; /* Makes headers stick to the top when scrolling */
-    top: 0; /* Position at the top */
-    z-index: 10; /* Ensures headers appear above table content */
-}
-
-.customers-table td {
-    padding: 16px 20px;
-    font-size: 14px;
-    color: var(--gray-700);
-    border-bottom: 1px solid var(--gray-100);
-    vertical-align: middle;
-}
-
-.customers-table tr:last-child td {
-    border-bottom: none;
-}
-
-.customers-table tr:hover td {
-    background-color: var(--gray-50);
-}
-
-.customer-email {
-    color: var(--gray-500);
-}
-
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-edit, .btn-delete {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-edit {
-    background-color: rgba(79, 70, 229, 0.1);
-    color: var(--primary);
-}
-
-.btn-edit:hover {
-    background-color: var(--primary);
-    color: white;
-}
-
-.btn-delete {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.btn-delete:hover {
-    background-color: var(--danger);
-    color: white;
-}
-
-.empty-state {
-    padding: 40px;
-    text-align: center;
-    color: var(--gray-500);
-}
-
-.empty-state i {
-    font-size: 48px;
-    margin-bottom: 15px;
-    opacity: 0.5;
-}
-
-/* Custom scrollbar for better appearance */
-.customers-table-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.customers-table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.customers-table-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-}
-
-.customers-table-container::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .customers-table th:nth-child(4),
-    .customers-table td:nth-child(4) {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
+    /* Modern Table Styles */
     .customer-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .customer-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--gray-900);
+        position: relative;
+        padding-left: 15px;
+    }
+    
+    .customer-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 24px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .add-customer-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .add-customer-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
     }
     
     .customers-table-container {
-        margin: 0 -15px;
-        border-radius: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        overflow: auto; /* Changed from hidden to auto to enable scrolling */
+        max-height: 500px; /* Set a maximum height for vertical scrolling */
+        animation: fadeIn 0.5s ease forwards;
     }
-}
-
-@media (max-width: 576px) {
-    .customers-table th:nth-child(1),
-    .customers-table td:nth-child(1) {
-        display: none;
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-}
+    
+    .customers-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 900px; /* Increased to accommodate new columns */
+    }
+    
+    .customers-table th {
+        background-color: var(--gray-50);
+        color: var(--gray-700);
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--gray-200);
+        position: sticky; /* Makes headers stick to the top when scrolling */
+        top: 0; /* Position at the top */
+        z-index: 10; /* Ensures headers appear above table content */
+    }
+    
+    .customers-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+    
+    .customers-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .customers-table tr:hover td {
+        background-color: var(--gray-50);
+    }
+    
+    .customer-email {
+        color: var(--gray-500);
+    }
+    
+    .customer-phone {
+        color: var(--gray-700);
+        font-family: monospace;
+    }
+    
+    .identity-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        background-color: var(--gray-100);
+        color: var(--gray-700);
+    }
+    
+    .identity-nida {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+    
+    .identity-voter {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .identity-driving {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: #f59e0b;
+    }
+    
+    .identity-passport {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .btn-edit, .btn-delete {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-edit {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+    
+    .btn-edit:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+    
+    .btn-delete:hover {
+        background-color: var(--danger);
+        color: white;
+    }
+    
+    .empty-state {
+        padding: 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    /* Custom scrollbar for better appearance */
+    .customers-table-container::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .customers-table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .customers-table-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    
+    .customers-table-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .customers-table th:nth-child(4),
+        .customers-table td:nth-child(4) {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .customer-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .customers-table-container {
+            margin: 0 -15px;
+            border-radius: 0;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .customers-table th:nth-child(1),
+        .customers-table td:nth-child(1) {
+            display: none;
+        }
+    }
 </style>
 
 <div class="customer-header">
     <h2 class="customer-title">Customer Management</h2>
-    <button class="add-customer-btn">
-        <i class="fas fa-plus"></i> Add Customer
-    </button>
 </div>
 
 <div class="customers-table-container">
@@ -225,6 +256,8 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
+                <th>Phone Number</th>
+                <th>Identity</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -235,6 +268,37 @@
                 <td>{{ user.first_name }}</td>
                 <td>{{ user.last_name }}</td>
                 <td class="customer-email">{{ user.email }}</td>
+                <td class="customer-phone">
+                    {% if user.profile.phone_number %}
+                        {{ user.profile.phone_number }}
+                    {% else %}
+                        <span style="color: var(--gray-400);">Not provided</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.profile.identity_type %}
+                        <span class="identity-badge identity-{{ user.profile.identity_type }}">
+                            {% if user.profile.identity_type == 'nida' %}
+                                NIDA
+                            {% elif user.profile.identity_type == 'voter' %}
+                                Voter ID
+                            {% elif user.profile.identity_type == 'driving' %}
+                                Driving License
+                            {% elif user.profile.identity_type == 'passport' %}
+                                Passport
+                            {% endif %}
+                        </span>
+                        <span style="margin-left: 5px; font-family: monospace; font-size: 12px;">
+                            {% if user.profile.identity_number %}
+                                {{ user.profile.identity_number }}
+                            {% else %}
+                                <span style="color: var(--gray-400);">No number</span>
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        <span style="color: var(--gray-400);">Not provided</span>
+                    {% endif %}
+                </td>
                 <td>
                     <div class="action-buttons">
                         <a href="{% url 'provider:update-customer' user.id %}" class="btn-edit" title="Edit customer">

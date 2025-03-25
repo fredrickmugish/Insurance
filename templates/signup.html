@@ -9,7 +9,7 @@
                 <h2>Create Account</h2>
                 <p>Join our insurance platform to explore policies</p>
             </div>
-            <form method="POST" class="auth-form">
+            <form method="POST" class="auth-form" id="signupForm">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="first_name"><i class="fas fa-user"></i></label>
@@ -28,12 +28,33 @@
                     <input type="email" id="email" name="email" placeholder="Email Address" required>
                 </div>
                 <div class="form-group">
+                    <label for="phone_number"><i class="fas fa-phone"></i></label>
+                    <input type="text" id="phone_number" name="phone_number" placeholder="Phone Number" required>
+                    <span class="error-message" id="phone-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="identity_type"><i class="fas fa-id-card"></i></label>
+                    <select id="identity_type" name="identity_type" required>
+                        <option value="" disabled selected>Select Identity Type</option>
+                        <option value="nida">NIDA Number</option>
+                        <option value="voter">Voter ID Number</option>
+                        <option value="driving">Driving License Number</option>
+                        <option value="passport">Passport Number</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="identity_number"><i class="fas fa-fingerprint"></i></label>
+                    <input type="text" id="identity_number" name="identity_number" placeholder="Identity Number" required>
+                    <span class="error-message" id="identity-error"></span>
+                </div>
+                <div class="form-group">
                     <label for="password"><i class="fas fa-lock"></i></label>
                     <input type="password" id="password" name="password" placeholder="Password" required>
                 </div>
                 <div class="form-group">
                     <label for="confirm-password"><i class="fas fa-check-circle"></i></label>
                     <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+                    <span class="error-message" id="password-error"></span>
                 </div>
                 <div class="form-options">
                     <div class="terms-agreement">
@@ -102,7 +123,7 @@
     transform: translateY(-50%);
     color: #1a73e8;
 }
-.form-group input {
+.form-group input, .form-group select {
     width: 100%;
     padding: 1rem 1rem 1rem 2.5rem;
     border: 1px solid #ddd;
@@ -110,7 +131,7 @@
     font-size: 1rem;
     transition: border-color 0.3s;
 }
-.form-group input:focus {
+.form-group input:focus, .form-group select:focus {
     border-color: #1a73e8;
     outline: none;
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
@@ -167,6 +188,15 @@
 .auth-footer a:hover {
     text-decoration: underline;
 }
+.error-message {
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    display: block;
+}
+.form-group.error input, .form-group.error select {
+    border-color: #ef4444;
+}
 @media (max-width: 480px) {
     .auth-header {
         padding: 1.5rem;
@@ -179,4 +209,119 @@
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signupForm');
+    const phoneInput = document.getElementById('phone_number');
+    const identityTypeSelect = document.getElementById('identity_type');
+    const identityNumberInput = document.getElementById('identity_number');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    
+    const phoneError = document.getElementById('phone-error');
+    const identityError = document.getElementById('identity-error');
+    const passwordError = document.getElementById('password-error');
+    
+    // Validate phone number (must be 10 digits)
+    phoneInput.addEventListener('input', function() {
+        const phoneValue = this.value.trim();
+        if (phoneValue.length !== 10 || !/^\d+$/.test(phoneValue)) {
+            phoneError.textContent = 'Phone number must be exactly 10 digits';
+            this.parentElement.classList.add('error');
+        } else {
+            phoneError.textContent = '';
+            this.parentElement.classList.remove('error');
+        }
+    });
+    
+    // Validate identity number based on selected type
+    identityTypeSelect.addEventListener('change', function() {
+        validateIdentityNumber();
+    });
+    
+    identityNumberInput.addEventListener('input', function() {
+        validateIdentityNumber();
+    });
+    
+    function validateIdentityNumber() {
+        const identityType = identityTypeSelect.value;
+        const identityNumber = identityNumberInput.value.trim();
+        
+        if (identityType === 'nida') {
+            // NIDA must be 20 characters
+            if (identityNumber.length !== 20) {
+                identityError.textContent = 'NIDA number must be exactly 20 characters';
+                identityNumberInput.parentElement.classList.add('error');
+                return false;
+            }
+        } else if (identityType === 'voter') {
+            // Voter ID validation (example: minimum 10 characters)
+            if (identityNumber.length < 10) {
+                identityError.textContent = 'Voter ID must be at least 10 characters';
+                identityNumberInput.parentElement.classList.add('error');
+                return false;
+            }
+        } else if (identityType === 'driving') {
+            // Driving license validation (example: minimum 8 characters)
+            if (identityNumber.length < 8) {
+                identityError.textContent = 'Driving license must be at least 8 characters';
+                identityNumberInput.parentElement.classList.add('error');
+                return false;
+            }
+        } else if (identityType === 'passport') {
+            // Passport validation (example: minimum 8 characters)
+            if (identityNumber.length < 8) {
+                identityError.textContent = 'Passport number must be at least 8 characters';
+                identityNumberInput.parentElement.classList.add('error');
+                return false;
+            }
+        }
+        
+        identityError.textContent = '';
+        identityNumberInput.parentElement.classList.remove('error');
+        return true;
+    }
+    
+    // Validate password match
+    confirmPasswordInput.addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+            passwordError.textContent = 'Passwords do not match';
+            this.parentElement.classList.add('error');
+        } else {
+            passwordError.textContent = '';
+            this.parentElement.classList.remove('error');
+        }
+    });
+    
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validate phone
+        const phoneValue = phoneInput.value.trim();
+        if (phoneValue.length !== 10 || !/^\d+$/.test(phoneValue)) {
+            phoneError.textContent = 'Phone number must be exactly 10 digits';
+            phoneInput.parentElement.classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate identity
+        if (!validateIdentityNumber()) {
+            isValid = false;
+        }
+        
+        // Validate password match
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            passwordError.textContent = 'Passwords do not match';
+            confirmPasswordInput.parentElement.classList.add('error');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}

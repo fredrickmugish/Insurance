@@ -1,5 +1,6 @@
 {% extends 'customer/customer_dashboard.html' %}
 {% load widget_tweaks %}
+{% load static %}
 
 {% block content %}
 <style>
@@ -116,6 +117,214 @@
         justify-content: flex-end;
         gap: 15px;
     }
+    
+    /* Payment method styles */
+    .payment-methods {
+        margin-bottom: 25px;
+    }
+    
+    .payment-method-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--gray-200);
+        margin-bottom: 20px;
+    }
+    
+    .payment-method-tab {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-600);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .payment-method-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    .payment-method-content {
+        display: none;
+        padding: 15px;
+        background-color: var(--gray-50);
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .payment-method-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .payment-info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .payment-info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .payment-info-label {
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+    
+    .payment-info-value {
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+    
+    .payment-instructions {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: rgba(79, 70, 229, 0.1);
+        border-left: 3px solid var(--primary);
+        border-radius: 4px;
+    }
+    
+    .payment-instructions p {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--gray-700);
+    }
+    
+    .payment-instructions ul {
+        margin-left: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .payment-instructions li {
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: var(--gray-700);
+    }
+    
+    .mobile-money-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .mobile-option {
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-option:hover {
+        border-color: var(--primary);
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+    
+    .mobile-option.selected {
+        border-color: var(--primary);
+        background-color: rgba(79, 70, 229, 0.1);
+    }
+    
+    .mobile-option img {
+        height: 40px;
+        margin-bottom: 8px;
+    }
+    
+    .mobile-option-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-800);
+    }
+    
+    .mobile-details {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .mobile-details.active {
+        display: block;
+        animation: fadeIn 0.3s ease forwards;
+    }
+    
+    /* Bank options styles */
+    .bank-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .bank-option {
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .bank-option:hover {
+        border-color: var(--primary);
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+    
+    .bank-option.selected {
+        border-color: var(--primary);
+        background-color: rgba(79, 70, 229, 0.1);
+    }
+    
+    .bank-option img {
+        height: 50px;
+        margin-bottom: 10px;
+    }
+    
+    .bank-option-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-800);
+    }
+    
+    .bank-details {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+    }
+    
+    .bank-details.active {
+        display: block;
+        animation: fadeIn 0.3s ease forwards;
+    }
+    
+    /* Add validation styles */
+    .field-error {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+    
+    .form-control.error {
+        border-color: #ef4444;
+    }
 </style>
 
 <div class="form-container">
@@ -139,24 +348,320 @@
         </div>
     </div>
     
-    <form method="POST" enctype="multipart/form-data">
+    <div class="payment-methods">
+        <div class="payment-method-tabs">
+            <div class="payment-method-tab active" data-tab="bank">Bank Transfer</div>
+            <div class="payment-method-tab" data-tab="mobile">Mobile Money</div>
+        </div>
+        
+        <!-- Bank Transfer Content -->
+        <div class="payment-method-content active" id="bank-content">
+            <div class="bank-options">
+                <div class="bank-option selected" data-bank="crdb">
+                    <img src="{% static 'image/crdb.png' %}" alt="CRDB Bank" onerror="this.src='https://via.placeholder.com/100x50?text=CRDB+Bank'">
+                    <div class="bank-option-name">CRDB Bank</div>
+                </div>
+                <div class="bank-option" data-bank="nmb">
+                    <img src="{% static 'image/nmb.png' %}" alt="NMB Bank" onerror="this.src='https://via.placeholder.com/100x50?text=NMB+Bank'">
+                    <div class="bank-option-name">NMB Bank</div>
+                </div>
+                <div class="bank-option" data-bank="nbc">
+                    <img src="{% static 'image/nbc.png' %}" alt="NBC Bank" onerror="this.src='https://via.placeholder.com/100x50?text=NBC+Bank'">
+                    <div class="bank-option-name">NBC Bank</div>
+                </div>
+            </div>
+            
+            <!-- CRDB Bank Details -->
+            <div class="bank-details active" id="crdb-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Bank Name:</span>
+                    <span class="payment-info-value">CRDB Bank</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal Ltd</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Number:</span>
+                    <span class="payment-info-value">0150408825100</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Branch:</span>
+                    <span class="payment-info-value">Dodoma Branch</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ul>
+                        <li>Make the transfer for the exact premium amount</li>
+                        <li>Use your policy number as reference</li>
+                        <li>Upload the payment receipt below</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- NMB Bank Details -->
+            <div class="bank-details" id="nmb-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Bank Name:</span>
+                    <span class="payment-info-value">NMB Bank</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal Ltd</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Number:</span>
+                    <span class="payment-info-value">22510006381</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Branch:</span>
+                    <span class="payment-info-value">Dodoma Branch</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ul>
+                        <li>Make the transfer for the exact premium amount</li>
+                        <li>Use your policy number as reference</li>
+                        <li>Upload the payment receipt below</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- NBC Bank Details -->
+            <div class="bank-details" id="nbc-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Bank Name:</span>
+                    <span class="payment-info-value">NBC Bank</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal Ltd</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Number:</span>
+                    <span class="payment-info-value">012105409300</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Branch:</span>
+                    <span class="payment-info-value">Dodoma Branch</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ul>
+                        <li>Make the transfer for the exact premium amount</li>
+                        <li>Use your policy number as reference</li>
+                        <li>Upload the payment receipt below</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Money Content -->
+        <div class="payment-method-content" id="mobile-content">
+            <div class="mobile-money-options">
+                <div class="mobile-option" data-mobile="mpesa">
+                    <img src="{% static 'image/mpesa.png' %}" alt="M-Pesa" onerror="this.src='https://via.placeholder.com/80x40?text=M-Pesa'">
+                    <div class="mobile-option-name">M-Pesa</div>
+                </div>
+                <div class="mobile-option" data-mobile="tigopesa">
+                    <img src="{% static 'image/yas.png' %}" alt="Tigo Pesa" onerror="this.src='https://via.placeholder.com/80x40?text=Tigo+Pesa'">
+                    <div class="mobile-option-name">Tigo Pesa</div>
+                </div>
+                <div class="mobile-option" data-mobile="airtel">
+                    <img src="{% static 'image/airtel.png' %}" alt="Airtel Money" onerror="this.src='https://via.placeholder.com/80x40?text=Airtel+Money'">
+                    <div class="mobile-option-name">Airtel Money</div>
+                </div>
+                <div class="mobile-option" data-mobile="halopesa">
+                    <img src="{% static 'image/halo.png' %}" alt="Halo Pesa" onerror="this.src='https://via.placeholder.com/80x40?text=Halo+Pesa'">
+                    <div class="mobile-option-name">Halo Pesa</div>
+                </div>
+                <div class="mobile-option" data-mobile="azampesa">
+                    <img src="{% static 'image/azam.png' %}" alt="Azam Pesa" onerror="this.src='https://via.placeholder.com/80x40?text=Azam+Pesa'">
+                    <div class="mobile-option-name">Azam Pesa</div>
+                </div>
+            </div>
+            
+            <!-- M-Pesa Details -->
+            <div class="mobile-details" id="mpesa-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Provider:</span>
+                    <span class="payment-info-value">M-Pesa</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Business Number:</span>
+                    <span class="payment-info-value">543210</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ol>
+                        <li>Go to M-Pesa menu on your phone</li>
+                        <li>Select "Pay Bill"</li>
+                        <li>Enter Business Number: 543210</li>
+                        <li>Enter Account Number: Your Policy Number</li>
+                        <li>Enter Amount: ${{ policy_record.policy.premium }}</li>
+                        <li>Enter your M-Pesa PIN and confirm</li>
+                        <li>Upload the confirmation SMS screenshot below</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Tigo Pesa Details -->
+            <div class="mobile-details" id="tigopesa-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Provider:</span>
+                    <span class="payment-info-value">Tigo Pesa</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Business Number:</span>
+                    <span class="payment-info-value">654321</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ol>
+                        <li>Go to Tigo Pesa menu on your phone</li>
+                        <li>Select "Pay Bill"</li>
+                        <li>Enter Business Number: 654321</li>
+                        <li>Enter Account Number: Your Policy Number</li>
+                        <li>Enter Amount: ${{ policy_record.policy.premium }}</li>
+                        <li>Enter your Tigo Pesa PIN and confirm</li>
+                        <li>Upload the confirmation SMS screenshot below</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Airtel Money Details -->
+            <div class="mobile-details" id="airtel-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Provider:</span>
+                    <span class="payment-info-value">Airtel Money</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Business Number:</span>
+                    <span class="payment-info-value">765432</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ol>
+                        <li>Go to Airtel Money menu on your phone</li>
+                        <li>Select "Pay Bill"</li>
+                        <li>Enter Business Number: 765432</li>
+                        <li>Enter Account Number: Your Policy Number</li>
+                        <li>Enter Amount: ${{ policy_record.policy.premium }}</li>
+                        <li>Enter your Airtel Money PIN and confirm</li>
+                        <li>Upload the confirmation SMS screenshot below</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Halo Pesa Details -->
+            <div class="mobile-details" id="halopesa-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Provider:</span>
+                    <span class="payment-info-value">Halo Pesa</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Business Number:</span>
+                    <span class="payment-info-value">876543</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ol>
+                        <li>Go to Halo Pesa menu on your phone</li>
+                        <li>Select "Pay Bill"</li>
+                        <li>Enter Business Number: 876543</li>
+                        <li>Enter Account Number: Your Policy Number</li>
+                        <li>Enter Amount: ${{ policy_record.policy.premium }}</li>
+                        <li>Enter your Halo Pesa PIN and confirm</li>
+                        <li>Upload the confirmation SMS screenshot below</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Azam Pesa Details -->
+            <div class="mobile-details" id="azampesa-details">
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Provider:</span>
+                    <span class="payment-info-value">Azam Pesa</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Business Number:</span>
+                    <span class="payment-info-value">987654</span>
+                </div>
+                <div class="payment-info-item">
+                    <span class="payment-info-label">Account Name:</span>
+                    <span class="payment-info-value">Insurance Portal</span>
+                </div>
+                
+                <div class="payment-instructions">
+                    <p><strong>Instructions:</strong></p>
+                    <ol>
+                        <li>Go to Azam Pesa menu on your phone</li>
+                        <li>Select "Pay Bill"</li>
+                        <li>Enter Business Number: 987654</li>
+                        <li>Enter Account Number: Your Policy Number</li>
+                        <li>Enter Amount: ${{ policy_record.policy.premium }}</li>
+                        <li>Enter your Azam Pesa PIN and confirm</li>
+                        <li>Upload the confirmation SMS screenshot below</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" id="paymentForm">
         {% csrf_token %}
         
         <div class="form-group">
             <label for="id_amount" class="form-label">Payment Amount</label>
-            {% render_field form.amount class="form-control" %}
+            <div class="form-control" style="background-color: var(--gray-50); cursor: not-allowed;">${{ policy_record.policy.premium }}</div>
+            <input type="hidden" name="amount" value="{{ policy_record.policy.premium }}" id="id_amount">
         </div>
         
         <div class="form-group">
-            <label for="id_payment_method" class="form-label">Payment Method</label>
-            {% render_field form.payment_method class="form-control" %}
+            <label for="id_transaction_id" class="form-label">Transaction ID/Reference Number</label>
+            <p style="font-size: 12px; margin-bottom: 8px; color: var(--gray-500);">Enter the transaction ID or reference number from your payment confirmation</p>
+            <input type="text" name="transaction_id" id="id_transaction_id" class="form-control" placeholder="e.g., TXN123456789">
+            <div id="transaction_id_error" class="field-error"></div>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_payment_date" class="form-label">Payment Date</label>
+            <p style="font-size: 12px; margin-bottom: 8px; color: var(--gray-500);">When did you make this payment?</p>
+            <input type="datetime-local" name="payment_date" id="id_payment_date" class="form-control">
+            <div id="payment_date_error" class="field-error"></div>
         </div>
         
         <div class="form-group">
             <label for="id_receipt_image" class="form-label">Upload Payment Receipt</label>
-            <p style="font-size: 12px; margin-bottom: 8px; color: var(--gray-500);">Upload a screenshot or photo of your payment receipt</p>
+            <p style="font-size: 12px; margin-bottom: 8px; color: var(--gray-500);">Upload a screenshot or photo of your payment receipt/confirmation</p>
             {% render_field form.receipt_image class="form-control" %}
+            <div id="receipt_image_error" class="field-error"></div>
         </div>
+        
+        <input type="hidden" name="payment_method" id="id_payment_method" value="CRDB Bank">
         
         <div class="form-actions">
             <a href="{% url 'customer:history' %}" class="btn-secondary">Cancel</a>
@@ -166,4 +671,213 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set current datetime as default for payment date
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        const formattedDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('id_payment_date').value = formattedDatetime;
+        
+        // Payment method tabs
+        const paymentTabs = document.querySelectorAll('.payment-method-tab');
+        const paymentContents = document.querySelectorAll('.payment-method-content');
+        
+        paymentTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                paymentTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content sections
+                paymentContents.forEach(content => content.classList.remove('active'));
+                
+                // Show the corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+                
+                // Update payment method in form
+                if (tabId === 'bank') {
+                    // Get the selected bank
+                    const selectedBank = document.querySelector('.bank-option.selected');
+                    if (selectedBank) {
+                        const bankType = selectedBank.getAttribute('data-bank');
+                        document.getElementById('id_payment_method').value = bankType.toUpperCase() + ' Bank';
+                    } else {
+                        document.getElementById('id_payment_method').value = 'CRDB Bank';
+                    }
+                } else {
+                    // Default to the first mobile option if mobile tab is selected
+                    const firstMobileOption = document.querySelector('.mobile-option');
+                    if (firstMobileOption) {
+                        const mobileType = firstMobileOption.getAttribute('data-mobile');
+                        
+                        // Format mobile payment method names to match what admin expects
+                        let displayName = '';
+                        switch(mobileType) {
+                            case 'mpesa':
+                                displayName = 'M-Pesa';
+                                break;
+                            case 'tigopesa':
+                                displayName = 'Tigo Pesa';
+                                break;
+                            case 'airtel':
+                                displayName = 'Airtel Money';
+                                break;
+                            case 'halopesa':
+                                displayName = 'Halo Pesa';
+                                break;
+                            case 'azampesa':
+                            displayName = 'Azam Pesa';
+                            break;
+                        default:
+                            displayName = mobileType.charAt(0).toUpperCase() + mobileType.slice(1);
+                    }
+                    document.getElementById('id_payment_method').value = displayName;
+                    
+                    // Trigger click on first mobile option
+                    firstMobileOption.click();
+                }
+            }
+        });
+    });
+    
+    // Bank options
+    const bankOptions = document.querySelectorAll('.bank-option');
+    const bankDetails = document.querySelectorAll('.bank-details');
+    
+    bankOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            bankOptions.forEach(o => o.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Hide all bank details
+            bankDetails.forEach(detail => detail.classList.remove('active'));
+            
+            // Show the corresponding details
+            const bankType = this.getAttribute('data-bank');
+            document.getElementById(`${bankType}-details`).classList.add('active');
+            
+            // Update payment method in form - format to match what admin expects
+            document.getElementById('id_payment_method').value = bankType.toUpperCase() + ' Bank';
+        });
+    });
+    
+    // Mobile money options
+    const mobileOptions = document.querySelectorAll('.mobile-option');
+    const mobileDetails = document.querySelectorAll('.mobile-details');
+    
+    mobileOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            mobileOptions.forEach(o => o.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Hide all mobile details
+            mobileDetails.forEach(detail => detail.classList.remove('active'));
+            
+            // Show the corresponding details
+            const mobileType = this.getAttribute('data-mobile');
+            document.getElementById(`${mobileType}-details`).classList.add('active');
+            
+            // Update payment method in form - format to match what admin expects
+            let displayName = '';
+            switch(mobileType) {
+                case 'mpesa':
+                    displayName = 'M-Pesa';
+                    break;
+                case 'tigopesa':
+                    displayName = 'Tigo Pesa';
+                    break;
+                case 'airtel':
+                    displayName = 'Airtel Money';
+                    break;
+                case 'halopesa':
+                    displayName = 'Halo Pesa';
+                    break;
+                case 'azampesa':
+                    displayName = 'Azam Pesa';
+                    break;
+                default:
+                    displayName = mobileType.charAt(0).toUpperCase() + mobileType.slice(1);
+            }
+            document.getElementById('id_payment_method').value = displayName;
+        });
+    });
+    
+    // Form validation
+    const paymentForm = document.getElementById('paymentForm');
+    
+    paymentForm.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validate transaction ID
+        const transactionId = document.getElementById('id_transaction_id');
+        const transactionIdError = document.getElementById('transaction_id_error');
+        
+        if (!transactionId.value.trim()) {
+            transactionIdError.textContent = 'Please enter a transaction ID or reference number';
+            transactionId.classList.add('error');
+            isValid = false;
+        } else {
+            transactionIdError.textContent = '';
+            transactionId.classList.remove('error');
+        }
+        
+        // Validate payment date
+        const paymentDate = document.getElementById('id_payment_date');
+        const paymentDateError = document.getElementById('payment_date_error');
+        
+        if (!paymentDate.value) {
+            paymentDateError.textContent = 'Please select the payment date';
+            paymentDate.classList.add('error');
+            isValid = false;
+        } else {
+            paymentDateError.textContent = '';
+            paymentDate.classList.remove('error');
+        }
+        
+        // Validate receipt image
+        const receiptImage = document.getElementById('id_receipt_image');
+        const receiptImageError = document.getElementById('receipt_image_error');
+        
+        if (receiptImage.files.length === 0) {
+            receiptImageError.textContent = 'Please upload a payment receipt';
+            receiptImage.classList.add('error');
+            isValid = false;
+        } else {
+            // Check file type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'application/pdf'];
+            if (!allowedTypes.includes(receiptImage.files[0].type)) {
+                receiptImageError.textContent = 'Please upload a valid image or PDF file';
+                receiptImage.classList.add('error');
+                isValid = false;
+            } else {
+                receiptImageError.textContent = '';
+                receiptImage.classList.remove('error');
+            }
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+    
+    // Set default payment method on page load
+    document.getElementById('id_payment_method').value = 'CRDB Bank';
+});
+</script>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends 'provider/provider_dashboard.html' %}
-
 {% load widget_tweaks %}
 
 {% block content %}
@@ -139,6 +138,21 @@
         transform: translateY(-2px);
     }
     
+    /* Identity type styles */
+    .identity-section {
+        grid-column: span 2;
+        margin-top: 10px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gray-200);
+    }
+    
+    .identity-section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 15px;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .form-container {
@@ -199,6 +213,41 @@
                 <label for="id_last_name" class="form-label">Last Name</label>
                 {{ form.last_name|add_class:"form-control" }}
             </div>
+            
+            <div class="form-group">
+                <label for="id_phone_number" class="form-label">Phone Number</label>
+                <input type="text" id="id_phone_number" name="phone_number" class="form-control" value="{{ user.profile.phone_number|default:'' }}" placeholder="Enter 10-digit phone number">
+                <small class="text-muted">Must be exactly 10 digits</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_identity_type" class="form-label">Identity Type</label>
+                <select id="id_identity_type" name="identity_type" class="form-control">
+                    <option value="" {% if not user.profile.identity_type %}selected{% endif %}>Select Identity Type</option>
+                    <option value="nida" {% if user.profile.identity_type == 'nida' %}selected{% endif %}>NIDA Number</option>
+                    <option value="voter" {% if user.profile.identity_type == 'voter' %}selected{% endif %}>Voter ID Number</option>
+                    <option value="driving" {% if user.profile.identity_type == 'driving' %}selected{% endif %}>Driving License Number</option>
+                    <option value="passport" {% if user.profile.identity_type == 'passport' %}selected{% endif %}>Passport Number</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_identity_number" class="form-label">Identity Number</label>
+                <input type="text" id="id_identity_number" name="identity_number" class="form-control" value="{{ user.profile.identity_number|default:'' }}" placeholder="Enter identity number">
+                <small class="text-muted" id="identity_hint">
+                    {% if user.profile.identity_type == 'nida' %}
+                        Must be exactly 20 characters
+                    {% elif user.profile.identity_type == 'voter' %}
+                        Voter ID format
+                    {% elif user.profile.identity_type == 'driving' %}
+                        Driving license format
+                    {% elif user.profile.identity_type == 'passport' %}
+                        Passport number format
+                    {% else %}
+                        Select an identity type first
+                    {% endif %}
+                </small>
+            </div>
         </div>
         
         <div class="form-actions">
@@ -209,4 +258,39 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const identityTypeSelect = document.getElementById('id_identity_type');
+        const identityHint = document.getElementById('identity_hint');
+        const phoneInput = document.getElementById('id_phone_number');
+        
+        // Update hint text based on selected identity type
+        identityTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            
+            if (selectedType === 'nida') {
+                identityHint.textContent = 'Must be exactly 20 characters';
+            } else if (selectedType === 'voter') {
+                identityHint.textContent = 'Voter ID format';
+            } else if (selectedType === 'driving') {
+                identityHint.textContent = 'Driving license format';
+            } else if (selectedType === 'passport') {
+                identityHint.textContent = 'Passport number format';
+            } else {
+                identityHint.textContent = 'Select an identity type first';
+            }
+        });
+        
+        // Validate phone number format
+        phoneInput.addEventListener('input', function() {
+            const phoneValue = this.value.trim();
+            if (phoneValue && (phoneValue.length !== 10 || !/^\d+$/.test(phoneValue))) {
+                this.setCustomValidity('Phone number must be exactly 10 digits');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    });
+</script>
 {% endblock content %}

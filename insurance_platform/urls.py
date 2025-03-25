@@ -16,6 +16,7 @@ urlpatterns = [
     path('contact/', views.contact_view, name='contact'),
     path('customer/dashboard/', views.customer_dashboard, name='customer_dashboard'),
     path('provider/dashboard/', views.provider_dashboard, name='provider_dashboard'),
+    
 ]
 
 if settings.DEBUG:
