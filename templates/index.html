@@ -72,9 +72,10 @@
     position: relative;
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start to push content up */
     justify-content: center;
     padding: 8rem 2rem;
+    padding-top: 15%; /* Reduced top padding to push content higher */
     background-image: url('{% static "image/insp.jpg" %}');
     background-size: cover;
     background-position: center;
@@ -99,6 +100,7 @@
     position: relative;
     max-width: 800px;
     margin: 0 auto;
+    margin-top: -10%; /* Negative margin to push content up further */
     z-index: 2;
 }
 
@@ -229,6 +231,9 @@
 }
 
 @media (max-width: 992px) {
+    .hero {
+        padding-top: 20%; /* Adjust for medium screens */
+    }
     .service-card {
         flex: 1 1 calc(50% - 1.5rem);
         max-width: calc(50% - 1.5rem);
@@ -246,6 +251,12 @@
 }
 
 @media (max-width: 768px) {
+    .hero {
+        padding-top: 25%; /* Adjust for smaller screens */
+    }
+    .hero-content {
+        margin-top: -2%; /* Less negative margin on smaller screens */
+    }
     .hero-content h1 {
         font-size: 2.5rem;
     }
@@ -266,6 +277,10 @@
 @media (max-width: 576px) {
     .hero {
         padding: 6rem 1rem;
+        padding-top: 30%; /* Adjust for very small screens */
+    }
+    .hero-content {
+        margin-top: 0; /* No negative margin on very small screens */
     }
     .hero-content h1 {
         font-size: 2rem;
