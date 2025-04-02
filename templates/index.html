@@ -7,7 +7,7 @@
 <section id="home" class="hero">
     <div class="hero-content">
         <h1>Secure Your Future with Confidence</h1>
-        <p>Comprehensive insurance solutions designed to protect what matters most to you. With years of experience and a commitment to excellence, we offer peace of mind and financial security. Our expert team is here to guide you through the process and help you choose the best insurance options for your unique needs.</p>
+        <p>Comprehensive insurance solutions designed to protect what matters most to you. With years of experience and a commitment to excellence, we offer peace of mind and financial security.</p>
         <a href="#services" class="cta-button">Explore Our Policies</a>
     </div>
 </section>
@@ -66,105 +66,134 @@
     </div>
 </section>
 
-
 <style>
-/* Additional responsive styles */
-@media (max-width: 1200px) {
-    .service-container {
-        gap: 1.5rem;
-    }
-    
-    .service-card {
-        flex: 1 1 calc(33.333% - 1.5rem);
-        max-width: calc(33.333% - 1.5rem);
-    }
+/* Hero section with clearly visible background image */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 2rem;
+    background-image: url('{% static "image/insp.jpg" %}');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-align: center;
 }
 
-@media (max-width: 992px) {
-    .service-card {
-        flex: 1 1 calc(50% - 1.5rem);
-        max-width: calc(50% - 1.5rem);
-    }
-    
-    .contact-container {
-        flex-direction: column;
-    }
-    
-    .contact-info, .contact-form {
-        flex: 1 1 100%;
-        max-width: 100%;
-    }
-    
-    .contact-info {
-        margin-bottom: 2rem;
-    }
+/* Add a semi-transparent overlay to improve text visibility */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay */
+    z-index: 1;
 }
 
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    
-    .hero-content p {
-        font-size: 1rem;
-    }
-    
-    .services h2 {
-        font-size: 2.2rem;
-    }
-    
-    .service-card {
-        padding: 1.5rem;
-    }
-    
-    .contact-details div span {
-        font-size: 0.9rem;
-    }
+/* Add text shadow for readability without darkening the background */
+.hero-content {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 2;
 }
 
-@media (max-width: 576px) {
-    .hero {
-        padding: 6rem 1rem;
-    }
-    
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-    
-    .service-card {
-        flex: 1 1 100%;
-        max-width: 100%;
-    }
-    
-    .services, .contact {
-        padding: 3rem 1rem;
-    }
-    
-    .contact-form {
-        padding: 1.5rem;
-    }
-    
-    .contact-form input, 
-    .contact-form textarea {
-        padding: 0.8rem;
-    }
-    
-    .contact-details div {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .contact-details div i {
-        margin-bottom: 0.5rem;
-    }
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Stronger text shadow */
+    color: #ffffff; /* Explicitly set to white */
 }
 
-/* Smooth scrolling for anchor links */
-html {
-    scroll-behavior: smooth;
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); /* Stronger text shadow */
+    color: #ffffff; /* Explicitly set to white */
 }
 
-/* Image responsiveness in service cards */
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+.cta-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+}
+
+/* Services section */
+.services {
+    padding: 6rem 2rem;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.services h2 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    position: relative;
+    display: inline-block;
+}
+
+.services h2:after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background-color: #3498db;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 3rem;
+    margin-top: 1.5rem;
+}
+
+.service-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.service-card {
+    flex: 1 1 calc(25% - 2rem);
+    max-width: calc(25% - 2rem);
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
 .service-card img {
     max-width: 80px;
     height: auto;
@@ -177,9 +206,101 @@ html {
     transform: scale(1.1);
 }
 
+.service-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.service-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Additional responsive styles */
+@media (max-width: 1200px) {
+    .service-container {
+        gap: 1.5rem;
+    }
+    .service-card {
+        flex: 1 1 calc(33.333% - 1.5rem);
+        max-width: calc(33.333% - 1.5rem);
+    }
+}
+
+@media (max-width: 992px) {
+    .service-card {
+        flex: 1 1 calc(50% - 1.5rem);
+        max-width: calc(50% - 1.5rem);
+    }
+    .contact-container {
+        flex-direction: column;
+    }
+    .contact-info, .contact-form {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    .contact-info {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    .services h2 {
+        font-size: 2.2rem;
+    }
+    .service-card {
+        padding: 1.5rem;
+    }
+    .contact-details div span {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 6rem 1rem;
+    }
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    .service-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    .services, .contact {
+        padding: 3rem 1rem;
+    }
+    .contact-form {
+        padding: 1.5rem;
+    }
+    .contact-form input,
+    .contact-form textarea {
+        padding: 0.8rem;
+    }
+    .contact-details div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .contact-details div i {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Improve form responsiveness */
-.contact-form input, 
-.contact-form textarea, 
+.contact-form input,
+.contact-form textarea,
 .contact-form button {
     width: 100%;
 }
@@ -189,7 +310,6 @@ html {
     .hero-content h1 {
         font-size: 1.8rem;
     }
-    
     .cta-button {
         padding: 0.7rem 1.5rem;
         font-size: 1rem;
@@ -202,10 +322,8 @@ html {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
-        
         const targetId = this.getAttribute('href');
         const targetElement = document.querySelector(targetId);
-        
         if (targetElement) {
             window.scrollTo({
                 top: targetElement.offsetTop,
@@ -216,11 +334,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Form submission handling (prevent default for demo)
-document.querySelector('.contact-form form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
-    this.reset();
-});
+const contactForm = document.querySelector('.contact-form form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Thank you for your message! We will get back to you soon.');
+        this.reset();
+    });
+}
 </script>
 
 {% endblock %}
